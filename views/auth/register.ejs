@@ -1,0 +1,55 @@
+<%- include('../partials/_header'); %>
+
+ 
+<div class="controlPanelBackground">
+    <img src="/images/login-bg.png">
+</div>
+
+<div class="loginHeadArea">
+    <div class="loginSubArea">
+        <div class="adminLoginFormBackground">
+            <div class="adminLoginFormSubBackground"></div>
+        </div>
+        <div class="adminLoginFormArea">
+            <div class="row m-b-20">
+                <div class="col-md-12">
+                    <div class="profilePhotoArea">
+                        <div class="profilePhoto">
+                            <img src="/images/logo.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="adminLoginForm" action="" method="POST" class="formArea" autocomplete="on">
+
+                <div class="input-group nameArea">
+                    <label for="email"><i class="far fa-user"></i></label>
+                    <input type="text" name="name" class="form-control" placeholder="Name" autofocus/>
+                </div>
+                <div class="input-group emailArea">
+                    <label for="email"><i class="far fa-user"></i></label>
+                    <input type="text" name="email" class="form-control" placeholder="E-mail *" autofocus/>
+                </div>
+                <div class="input-group passwordArea">
+                    <label for="password"><i class="far fa-lock"></i></label>
+                    <input type="password" name="password" class="form-control" placeholder="Password *" autofocus/>
+                </div>
+                <div class="input-group passwordArea">
+                    <label for="password"><i class="far fa-lock"></i></label>
+                    <input type="password" name="confirmpassword" class="form-control" placeholder="Confirm Password *" autofocus/>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="loginSubmitButton">
+                            SIGN UP
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/_footer'); %>

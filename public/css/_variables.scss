@@ -1,0 +1,193 @@
+$img: "/assets/img/";
+$i : !important;
+
+
+
+/** Web Site Special Variables **/
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('../fonts/fontawesome-webfont.woff2') format('woff2'),
+  url('../fonts/fontawesome-webfont.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'Campton Black';
+  src: url('../fonts/CamptonBlack.woff2') format('woff2'),
+  url('../fonts/CamptonBlack.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Campton Bold';
+  src: url('../fonts/CamptonBold.woff2') format('woff2'),
+  url('../fonts/CamptonBold.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Campton Book';
+  src: url('../fonts/CamptonBook.woff2') format('woff2'),
+  url('../fonts/CamptonBook.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Campton ExtraBold';
+  src: url('../fonts/CamptonExtraBold.woff2') format('woff2'),
+  url('../fonts/CamptonExtraBold.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Campton ExtraLight';
+  src: url('../fonts/CamptonExtraLight.woff2') format('woff2'),
+  url('../fonts/CamptonExtraLight.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Campton Light';
+  src: url('../fonts/CamptonLight.woff2') format('woff2'),
+  url('../fonts/CamptonLight.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Campton Medium';
+  src: url('../fonts/CamptonMedium.woff2') format('woff2'),
+  url('../fonts/CamptonMedium.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Campton SemiBold';
+  src: url('../fonts/CamptonSemiBold.woff2') format('woff2'),
+  url('../fonts/CamptonSemiBold.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Campton Thin';
+  src: url('../fonts/CamptonThin.woff2') format('woff2'),
+  url('../fonts/CamptonThin.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Linotte';
+  src: url('../fonts/Linotte-Regular 400.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+
+$fontBlack:'Campton Black';
+$fontExtraBold:'Campton ExtraBold';
+$fontSemiBold:'Campton SemiBold';
+$fontBold:'Campton Bold';
+$fontMedium:'Campton Medium';
+$fontBook:'Campton Book';
+$fontLight:'Campton Light';
+$fontThin:'Campton Thin';
+$fontExtraLight:'Campton ExtraLight';
+
+$fontLinotte:'Linotte';
+
+$fontFontAwesome:'FontAwesome';
+
+
+
+$whiteColor:white;
+$blackColor:#2c343b;
+$greenColor:#5AD363;
+$searchColor: #919191;
+$borderBottomColor: #e6e6f0;
+$textColor: #696763;
+$orangeColor:#ff8b39;
+$logoColor: #D6DDE0;
+$logoColorHover: #e77216;
+
+$starEmpty: #d8d8d8;
+$starFull: #ffc000;
+$oldPriceColor: #919191;
+$discountColor: #f90909;
+$color1:#ddd;
+$color2: #d2d2d2;
+$color3: #F2F2F2;
+$color4: #5a5855;
+$color5: #e2e2e2;
+$color6: #537ecf;
+$color7: rgba(0,0,0,0.15);
+$color8:rgba(0,0,0,0.17);
+$color9:rgba(175,175,175,0.7);
+$color10: #9b9b9b;
+$color11: #aaaaaa;
+$color12: #bebebe;
+$color13: #e1e1e1;
+$color14: #e1e1eb;
+$color15: #FAFAFA;
+$color16: #666666;
+$color17: #FFF0E4;
+$color18: #767676;
+$color19: #EEEEEE;
+$color20: #F9FAFB;
+$color21: #dc2626;
+$color22: #cb2323;
+$languageColor: #2c343b;
+$languageHoverColor: #4e5c67;
+$color23: #f5f5f5;
+$color24: #721c24;
+$color25: #ced4da;
+$color26: #cccccc;
+$color27: #999999;
+$color28: #fafafa;
+$color29: #DDDDDD;
+$color30: #F8F8F8;
+$darkGreen: #31A24C;
+$color31: #495057;
+$color32: #fff1e6;
+$color33: #f8d7da;
+$successBorder: #c3e6cb;
+$successColor: #155724;
+$successBackground: #d4edda;
+$dangerBorder: #f5c6cb;
+$dangerColor: #721c24;
+$dangerBackground: #f8d7da;
+
+$formInputColor: rgba(204, 204, 204, 0.75);
+$textSelectionColor: #74828d;
+$textSelectionHoverColor: #7c8891;
+
+$success: #93BE52;
+$info: #62d1f3;
+$warning: #FFB64D;
+$danger: #FC6180;
+
+
+// Customs
+$border: #D6DEE0; //#D8E0E2; // #D6DDE0;
+$background: #E7EAEB; // #F2F4F5;
+
+$searchBackground: #F2F2F2; // #F6F6F6;
+$searchBackgroundHover: #EEEEEE;
+
+$time: #ADADAD;
+$shortText: #A8A8A8; //#ADADAD;
+$iconColor: #707070;
+$textColor: #2c343b;
+
+$meBackground: #B2ED8C; // #B2ED8C;
+
+$profileInfoBackground: #E4E8E9; // #E7EAEB;
+$personListBackground: #F9FBFB;
+$eachPersonBackgroundHoverActive: #EEF0F0; // #EEF0F0;
+$headerBackground: #E4E8E9;
+$footerBackground: #E4E8E9; // #EEF0F0;
+
+// main radius
+$mainRadius: 10px;
+
+
