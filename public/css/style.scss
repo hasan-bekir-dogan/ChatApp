@@ -1,0 +1,1012 @@
+@import "function";
+@import "_variables";
+//@import "fontawesome/css/all.min.css";
+
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  /*margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  text-decoration: none;*/
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+html {
+  overflow-x: hidden !important;
+  scroll-behavior: smooth !important;
+}
+body {
+  font-family: $fontMedium;
+  font-weight: 300;
+  line-height: 1;
+  font-size: 14px;
+  scroll-behavior: smooth !important;
+    padding:0 $i;
+    height:fit-content;
+}
+::-moz-selection {
+    color: $whiteColor;
+    background: $textSelectionColor;
+}
+
+::selection {
+    color: $whiteColor;
+    background: $textSelectionColor;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+a {
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+  &:hover {
+    text-decoration: none;
+  }
+}
+strong {
+  font-weight: 600;
+}
+
+.errorBox {
+  display: none;
+}
+
+textarea:hover,
+input:hover,
+textarea:active,
+input:active,
+textarea:focus,
+input:focus,
+button:focus,
+button:active,
+button:hover,
+label:focus,
+.btn:active,
+.btn.active
+{
+  outline:0px !important;
+  -webkit-appearance:none;
+}
+h1,h2,h3,h4,h5,h6,strong,b {
+}
+.succesData {
+  font-size: 16px;
+  color: $whiteColor;
+  background: #34bfa3;
+  padding: 10px;;
+  @include radius(5px);
+
+}
+
+.errorData {
+  font-size: 16px;
+  color: $whiteColor;
+  background: #c0392b;
+  padding: 10px;
+  @include radius(5px);
+
+}
+.center {
+  width: 90%;
+  margin: 0 5%;
+}
+.clearfix {
+  clear: both;
+}
+
+/*** checkboxes **/
+
+.checkbox label:after,
+.radio label:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.checkbox .cr,
+.radio .cr {
+  position: relative;
+  display: inline-block;
+  border: 1px solid #a9a9a9;
+  border-radius: .25em;
+  width: 1.3em;
+  height: 1.3em;
+  float: left;
+  margin-right: 10px;
+}
+
+.radio .cr {
+  border-radius: 50%;
+}
+
+.checkbox .cr .cr-icon,
+.radio .cr .cr-icon {
+  position: absolute;
+  font-size: .8em;
+  line-height: 0;
+  top: 50%;
+  left: 20%;
+}
+
+.radio .cr .cr-icon {
+  margin-left: 0.04em;
+}
+
+.checkbox label input[type="checkbox"],
+.radio label input[type="radio"] {
+  display: none;
+}
+
+.checkbox label input[type="checkbox"] + .cr > .cr-icon,
+.radio label input[type="radio"] + .cr > .cr-icon {
+  transform: scale(3) rotateZ(-20deg);
+  opacity: 0;
+  transition: all .3s ease-in;
+}
+
+.checkbox label input[type="checkbox"]:checked + .cr > .cr-icon,
+.radio label input[type="radio"]:checked + .cr > .cr-icon {
+  transform: scale(1) rotateZ(0deg);
+  opacity: 1;
+  font-size: 18px;
+}
+
+.checkbox label input[type="checkbox"]:disabled + .cr,
+.radio label input[type="radio"]:disabled + .cr {
+  opacity: .5;
+}
+
+/************/
+.formError .formErrorContent{
+  min-width: 173px;
+}
+#newsletterForm .mailformError{
+  left: calc(100vw / 5.5) !important;
+}
+.grecaptcha-badge{
+  display:none;
+  width: 0 $i;
+  height: 0 $i;
+  position: absolute $i;
+  top:-500px;
+  left:-500px;
+}
+.fal, .far {
+  font-family: "Font Awesome 5 Pro";
+
+}
+
+/*********/
+/* Slider Begin*/
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+/**
+* Resets
+*/
+*, *::after, *::before {
+  box-sizing: border-box;
+}
+
+
+
+html {
+  font-size: 100%;
+}
+
+body {
+  font-size: 1rem;
+  font-family: $fontMedium;
+  color: #2c343b;
+  background-color: white;
+}
+ul, li {
+  margin: 0;
+  padding: 0;
+}
+
+ul { list-style: none; }
+img { max-width: 100%; height: auto; }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px transparent inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+
+.form-check input {
+  opacity: 0;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+}
+.form-check label {
+  margin-bottom: 0;
+  letter-spacing: 0.2px;
+  position: relative;
+  text-align: left;
+  padding-left:4px;
+}
+.form-check input:checked ~ label:before {
+  border: 1px solid $logoColor;
+}
+.form-check label::before {
+  content: "";
+  position: absolute;
+  left: -18px;
+  top: 0;
+  width: 15px;
+  height: 15px;
+  border: 1px solid $searchColor;
+  @include radius(3px);
+}
+.form-check input:checked ~ label::after {
+  display: block;
+}
+.form-check label::after {
+  content: "" !important;
+  font-family: "Fontawesome";
+  position: absolute;
+  left: -16.3px;
+  top: 2px;
+  color: $logoColor;
+  font-size: 11px;
+  display: none;
+}
+/*--------------------------------------------------------------------------------------------*/
+
+/*.....................................................................................................*/
+/* scroll bar start */
+::-webkit-scrollbar {
+  width: 12px;
+}
+body {
+  scrollbar-color: $color8 $whiteColor;
+}
+::-webkit-scrollbar-track {
+  background: $whiteColor;
+  box-shadow: 10px 10px 8px 10px $whiteColor;
+}
+::-webkit-scrollbar-thumb {
+  background-color: $color8 ;
+  border: 2px solid $whiteColor;
+  border-radius:10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: $color9;
+  -webkit-box-shadow: inset 0 0 3px rgba(0,0,0,0.2);
+}
+
+/* scroll bar end */
+
+/****************************************************************************/
+
+// Index (begin)
+.surface{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  .main{
+    width:84%;
+    height: 95%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: start;
+    align-items: start;
+    box-shadow: 0px 0px 10px $border;
+    border: 1px solid $border;
+    @include radius($mainRadius);
+    .person{
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      align-content: center;
+      align-items: center;
+      height: 100%;
+      background-color: $personListBackground;
+      @include top-left-radius($mainRadius);
+      @include bottom-left-radius($mainRadius);
+      .profileInfoArea{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-content: center;
+        align-items: center;
+        padding: 14px;
+        border-bottom: 1px solid $border;
+        width: 100%;
+        background-color: $profileInfoBackground;
+        @include top-left-radius($mainRadius);
+        .infoArea{
+          display: flex;
+          flex-direction: row;
+          justify-content: start;
+          align-content: center;
+          align-items: center;
+          .profilePhoto{
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 50%;
+          }
+          .content{
+            padding: 7px 14px;
+            height: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-content: start;
+            align-items: start;
+            .name{
+              font-size: 14px;
+              font-weight: bold;
+            }
+            .shortDetail{
+              font-size: 12px;
+              height: 12px;
+              line-height: 1;
+              overflow: hidden;
+              color: $shortText;
+            }
+          }
+        }
+        .settings{
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-content: center;
+          align-items: center;
+          font-size: 20px;           
+          .settingButton{
+            color: $textColor;
+          }  
+        }
+      }
+      .searchArea{
+        width: 100%;
+        padding: 14px;
+        position:relative;
+        .search{
+          width:100%;
+          background-color: $searchBackground;
+          border:none;
+          border-radius: 4px;
+          padding:10px 14px 10px 40px;
+          color: $textColor;
+        }
+        .search:focus{
+          background-color: $searchBackgroundHover;
+        }
+        .search::placeholder{
+          color: $time;
+        }
+        >i{
+          position: absolute;
+          left:28px;
+          top:27px;
+          color: $time;
+        }
+      }
+      .personList{
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-content: center;
+        align-items: center;
+        overflow: auto;
+        .eachPerson{
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-content: center;
+          align-items: center;
+          padding: 14px;
+          position: relative;
+          hr{
+            margin:0 14px;
+            height: 0;
+            border-top: 1px solid $border;
+            width: calc(100% - 28px);
+            opacity: 0.6;
+            position: absolute;
+            left:0;
+            z-index: 9;
+          }
+          .topLine{
+            top:0;
+            display: none;
+          }
+          .bottomLine{
+            bottom:0;
+          }
+          .profilePhoto{
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 50%;
+          }
+          .content{
+            padding: 7px 14px;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-content: start;
+            align-items: start;
+            .name{
+              font-size: 16px;
+              font-weight: bold;
+            }
+            .shortDetail{
+              font-size: 14px;
+              height: 14px;
+              line-height: 1;
+              overflow: hidden;
+              color: $shortText;
+            }
+          }
+          .time{
+            font-size: 12px;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: start;
+            align-content: start;
+            text-align: right;
+            line-height: 1.4;
+            padding: 7px 0;
+            color: $time;
+          }
+          &:first-child{
+            .topLine{
+              display:none;
+            }
+          }
+          &:last-child{
+            border-bottom: none;
+            .bottomLine{
+              display:none;
+            }
+          }
+          &:hover{
+            background-color: $eachPersonBackgroundHoverActive;
+            cursor: pointer;
+            hr{
+              z-index: 99;
+              border-top: 1px solid $eachPersonBackgroundHoverActive;
+              opacity: 1;
+              left: 0;
+              width: 100%;
+              margin:0;
+            }
+            .topLine{
+              display:block;
+              top: -1px;
+            }
+            .bottomLine{
+              bottom: -1px;
+            }
+          }
+          &.active{
+            background-color: $eachPersonBackgroundHoverActive;
+            hr{
+              z-index: 99;
+              border-top: 1px solid $eachPersonBackgroundHoverActive;
+              opacity: 1;
+              left: 0;
+              width: 100%;
+              margin:0;
+            }
+            .topLine{
+              display:block;
+              top: -1px;
+            }
+            .bottomLine{
+              bottom: -1px;
+            }
+          }
+        }
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+        &::-webkit-scrollbar-track {
+          box-shadow: none; 
+          background-color: $personListBackground;
+          border-radius: 10px;
+        }
+        &::-webkit-scrollbar-thumb {
+          border-radius: 0px;
+          border:none;
+          background: $headerBackground; 
+        }
+        &::-webkit-scrollbar-thumb:hover {
+          background: $headerBackground; 
+          box-shadow: none; 
+        }
+      }
+    }
+    .personDetail{
+      border-left: 1px solid $border;
+      height:100%;
+      position:relative;
+      .bodybackground{
+        background-color: white;
+        opacity: 0.74;
+        position: absolute;
+        left:0;
+        top:0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        object-fit: cover;
+        object-position: center;
+        filter:brightness(89%);
+        @include top-right-radius($mainRadius);
+        @include bottom-right-radius($mainRadius);
+      }
+      .header{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-content: center;
+        align-items: center;
+        padding: 14px;
+        border-bottom: 1px solid $border;
+        width: 100%;
+        background-color: $headerBackground;
+        @include top-right-radius($mainRadius);
+        .infoArea{
+          display: flex;
+          flex-direction: row;
+          justify-content: start;
+          align-content: center;
+          align-items: center;
+          .profilePhoto{
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 50%;
+          }
+          .content{
+            padding: 7px 14px;
+            height: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-content: start;
+            align-items: start;
+            .name{
+              font-size: 14px;
+              font-weight: bold;
+            }
+            .shortDetail{
+              font-size: 12px;
+              height: 12px;
+              line-height: 1;
+              overflow: hidden;
+              color: $shortText;
+            }
+          }
+        }
+        .settings{
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-content: center;
+          align-items: center;
+          font-size: 20px;    
+          .settingButton{
+            color: $textColor;
+          }  
+        }
+      }
+      .body{
+        padding: 14px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-content: space-between;
+        align-items: stretch;
+        height: calc(100% - 143px);
+        @include top-right-radius($mainRadius);
+        @include bottom-right-radius($mainRadius);
+        .eachMessage{
+          width: 100%;
+          margin-bottom:14px;
+          .subRegion{
+            max-width:75%;
+            min-width: 200px;
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            align-content: start;
+            align-items: start;
+            .profilePhoto{
+              width: 45px;
+              height: 45px;
+              object-fit: cover;
+              object-position: center;
+              border-radius: 50%;
+            }
+            .messageArea{
+              background-color: white;
+              padding: 14px 14px 35px 14px;
+              border-radius: 15px;
+              position: relative;
+              width: calc(100% - 60px);
+              .message{
+                font-size: 14px;
+                line-height: 1.3;
+              }
+              .time{
+                font-size: 11px;
+                position: absolute;
+                right: 14px;
+                bottom: 7px;
+                color: $time;
+                line-height: 1.3;
+              }
+            }
+          }
+        }
+        .you{
+          display: flex;
+          flex-direction: row;
+          justify-content: start;
+          align-content: center;
+          align-items: center;
+          .subRegion{
+            max-width:75%;
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            align-content: start;
+            align-items: start;
+            .messageArea{
+              margin-left: 14px;
+              background-color: white;
+              border-top-left-radius: 0;
+              .message:before{
+                content: "";
+                position: absolute;
+                left: -15px;
+                top: 0;
+                width: 0;
+                height: 0;
+                //border-top: 13px solid transparent;
+                border-right: 15px solid white;
+                border-bottom: 15px solid transparent;
+                border-top-left-radius: 5px;
+              }
+            }
+          }
+        }
+        .me{
+          display: flex;
+          flex-direction: row;
+          justify-content: end;
+          align-content: center;
+          align-items: center;
+          .subRegion{
+            max-width:75%;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: end;
+            align-content: start;
+            align-items: start;
+            .messageArea{
+              margin-right: 14px;
+              background-color: $meBackground; // #B2ED8C
+              border-top-right-radius: 0;
+              .message:before{
+                content: "";
+                position: absolute;
+                right: -15px;
+                top: 0;
+                width: 0;
+                height: 0;
+                //border-top: 13px solid transparent;
+                border-left: 15px solid $meBackground;
+                border-bottom: 15px solid transparent;
+                border-top-right-radius: 5px;
+              }
+            }
+          }
+        }
+      }
+      .footer{
+        background-color: $footerBackground;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-content: start;
+        align-items: start;
+        padding: 14px 20px;
+        border-top: 1px solid $border;
+        @include bottom-right-radius($mainRadius);
+        .text{
+          width: calc(100% - 54px);
+          height: 40px;
+          background-color: white;
+          border:1px solid white;
+          border-radius: 4px;
+          padding:10px 14px;
+        }
+        .text:focus{
+          border:1px solid $border;
+        }
+        .sendButton{
+          width:40px;
+          height:40px;
+          border-radius: 50%;
+          background-color: white;
+          border:1px solid $border;
+          display:flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          align-content: center;
+          color: $iconColor;
+        }
+        .sendButton:hover{
+          background-color: $searchBackground;
+        }
+      }
+    }
+  }
+}
+// Index (end)
+
+/****************************************************************************/
+
+// Login (begin)
+
+.controlPanelBackground{
+  position: absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  z-index: 4;
+  img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      object-position: center;
+      filter: blur(8px);
+  }
+}
+
+.loginHeadArea{
+  width:100%;
+  height:100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content:center;
+  align-content: center;
+  align-items: center;
+  position:relative;
+  z-index:5;
+  .loginSubArea{
+      width:400px;
+      padding:30px;
+      @include radius(5px);
+      position:relative;
+      z-index:8;
+      display: flex;
+      flex-direction: column;
+      justify-content:center;
+      align-content: center;
+      align-items: center;
+      overflow:hidden;
+      .adminLoginFormBackground{
+          @include radius(5px);
+          position:absolute;
+          z-index:10;
+          width:calc(100% + 16px);
+          height:calc(100% + 16px);
+          top:-8px;
+          bottom:-8px;
+          left:-8px;
+          right:-8px;
+          background-image: url('../images/admin3.png');
+          background-position: center;
+          filter: blur(8px);
+          .adminLoginFormSubBackground{
+              position:absolute;
+              z-index:11;
+              top:0;
+              left:0;
+              background-color:$whiteColor;
+              width:100%;
+              height:100%;
+              opacity: 0.5;
+          }
+      }
+      .adminLoginFormArea {
+          position:relative;
+          z-index:15;
+          width:100%;
+          .profilePhotoArea{
+              width:100%;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-content: center;
+              align-items: center;
+              .profilePhoto{
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: center;
+                  align-content: center;
+                  align-items: center;
+                  margin-bottom: 20px;
+                  >i {
+                      font-size: 70px;
+                  }
+                  img{
+                      height: 100%;
+                      width:100%;
+                      object-fit: cover;
+                      object-position: center;
+                  }
+              }
+          }
+          h3 {
+              text-align: center !important;
+              font-size: 28px;
+              margin-bottom: 0;
+              color: $logoColor;
+          }
+
+          .m-b-20 {
+              margin-bottom: 0;
+          }
+          .mb-4 {
+              .font-medium.text-red-600 {
+                  font-size: 16px;
+                  color: $color21;
+              }
+
+              .mt-3.list-disc {
+                  list-style-type: disc;
+                  font-size: 14px;
+                  color: $color21;
+
+                  > li {
+                      margin-left: 20px;
+                  }
+              }
+          }
+
+          .loginSubmitButton {
+              background-color: $logoColor;
+              color: rgb(80, 80, 80);
+              text-align: center;
+              padding: 12px 30px;
+              border: 2px solid transparent;
+              outline: none;
+              @include radius(5px);
+              transition: 0.2s;
+              font-size: 17px;
+              line-height: 17px;
+              margin-bottom: 0;
+              margin-top:10px;
+              width: 100%;
+              font-weight: bold;
+              cursor:pointer;
+          }
+
+          .input-group {
+            margin-bottom: 15px;
+              label {
+                  width: 40px;
+                  height: 40px;
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: center;
+                  align-items: center;
+                  align-content: center;
+                  font-size: 15px;
+                  margin-bottom: 0;
+                  background-color: $color3;
+                  color: $languageHoverColor;
+                  border-top-left-radius: 5px;
+                  border-bottom-left-radius: 5px;
+                  border: 1px solid $color24;
+                  border-right: none;
+              }
+
+              input {
+                  height: 40px;
+                  border-top-right-radius: 5px;
+                  border-bottom-right-radius: 5px;
+
+                  &:focus {
+                      border: 1px solid $logoColor;
+                  }
+              }
+          }
+          .forgetPasswordArea{
+              margin-top:25px;
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+              align-content: center;
+              >a {
+                  display:block;
+                  width:fit-content;
+                  height:fit-content;
+                  font-size: 15px;
+                  text-decoration: underline;
+                  text-align: center;
+                  color: $languageColor;
+                  &:hover{
+                      color: $languageHoverColor;
+                  }
+              }
+          }
+      }
+  }
+}
+
+// Login (end)
