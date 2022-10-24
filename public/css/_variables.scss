@@ -164,7 +164,7 @@ $textSelectionHoverColor: #7c8891;
 $success: #93BE52;
 $info: #62d1f3;
 $warning: #FFB64D;
-$danger: #FC6180;
+$danger: #c0392b; //#FC6180
 
 
 // Customs
@@ -175,11 +175,13 @@ $searchBackground: #F2F2F2; // #F6F6F6;
 $searchBackgroundHover: #EEEEEE;
 
 $time: #ADADAD;
+$timeMe: #7c7a7a;
 $shortText: #A8A8A8; //#ADADAD;
 $iconColor: #707070;
 $textColor: #2c343b;
 
-$meBackground: #B2ED8C; // #B2ED8C;
+
+$meBackground: #B6FCA9; // #B2ED8C;
 
 $profileInfoBackground: #E4E8E9; // #E7EAEB;
 $personListBackground: #F9FBFB;
@@ -187,7 +189,16 @@ $eachPersonBackgroundHoverActive: #EEF0F0; // #EEF0F0;
 $headerBackground: #E4E8E9;
 $footerBackground: #E4E8E9; // #EEF0F0;
 
+$link: #4A5864;
+
+$logoColor: linear-gradient(to right top, #0EBA59, #137A42);
+$logoColorDisabled: linear-gradient(to right top, #10D162, #17934F);
+$approveColor: #29E907;
+
 // main radius
 $mainRadius: 10px;
 
+$cancel: #a5a9b5;
+$cancelDisabled: #A8A8A8;
 
+$edit: #74C0FC; //#FFD43B;

@@ -5,6 +5,11 @@ const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const methodOverride = require("method-override");
 const pageRoute = require("./routes/pageRoute");
+const userRoute = require("./routes/userRoute");
+const personRoute = require("./routes/personRoute");
+const profileRoute = require("./routes/profileRoute");
+const chatRoute = require("./routes/chatRoute");
+const messageRoute = require("./routes/messageRoute");
 
 const app = express();
 
@@ -50,10 +55,21 @@ app.use(
 );
 
 // Routes
-/*app.use("*", (req, res, next) => {
-  userAuth = req.session.userId;
-});*/
+app.use("*", (req, res, next) => {
+  userIn = req.session.userId;
+  next();
+});
 app.use("/", pageRoute);
+app.use("/users", userRoute);
+app.use("/person", personRoute);
+app.use("/profile", profileRoute);
+app.use("/chat", chatRoute);
+app.use("/message", messageRoute);
+
+// 404 not found page (it will be end of the routes)
+app.use((req, res, next) => {
+  res.status(404).render("errors/404");
+});
 
 const port = 5000;
 app.listen(port, () => {

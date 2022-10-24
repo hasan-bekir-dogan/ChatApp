@@ -330,6 +330,15 @@ body {
 
 /****************************************************************************/
 
+/* alerts (begin) */
+.alert-danger{
+  font-size: 14px;
+  line-height: 1.2;
+  padding: 0.75rem 1.25rem;
+}
+/* alerts (end) */
+
+
 // Index (begin)
 .surface{
   display: flex;
@@ -350,6 +359,45 @@ body {
     box-shadow: 0px 0px 10px $border;
     border: 1px solid $border;
     @include radius($mainRadius);
+    position: relative;
+    z-index: 50;
+    .mainSettings{
+      display:flex;
+      flex-direction: column;
+      justify-content: start;
+      align-items: start;
+      align-content: start;
+      position: absolute;
+      box-shadow: 0px 0px 10px $border;
+      z-index: 100;
+      left:-55px;
+      top: 143px;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+      background-color: $personListBackground;
+      border:1px solid $border;
+      width: 55px;
+      >button{
+        border: none;
+        transition: 0.2s;
+        display:flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        font-size: 22px;
+        width: 55px;
+        height: 55px;
+        background-color: transparent;
+        color: $textColor;
+        &:hover{
+          background-color: $headerBackground;
+        }
+        &.active{
+          background-color: $headerBackground;
+        }
+      }
+    }
     .person{
       display: flex;
       flex-direction: column;
@@ -360,6 +408,8 @@ body {
       background-color: $personListBackground;
       @include top-left-radius($mainRadius);
       @include bottom-left-radius($mainRadius);
+      position:relative;
+      z-index:150;
       .profileInfoArea{
         display: flex;
         flex-direction: row;
@@ -371,12 +421,16 @@ body {
         width: 100%;
         background-color: $profileInfoBackground;
         @include top-left-radius($mainRadius);
+        width: 446.98px;
         .infoArea{
           display: flex;
           flex-direction: row;
           justify-content: start;
           align-content: center;
           align-items: center;
+          &:hover{
+            cursor: pointer;
+          }
           .profilePhoto{
             width: 45px;
             height: 45px;
@@ -405,7 +459,7 @@ body {
             }
           }
         }
-        .settings{
+        .mySettings{
           display: flex;
           flex-direction: row;
           justify-content: center;
@@ -416,30 +470,109 @@ body {
             color: $textColor;
           }  
         }
+        .mySettings {
+          position: relative;
+          display: inline-block;
+          .settingsButton {
+            background-color: transparent;
+            color: $textColor;
+            padding: 12px;
+            font-size: 20px;     
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            &:hover, &:focus{
+              background-color: $eachPersonBackgroundHoverActive;
+            }
+          }  
+          .settingsContent {
+            display: none;
+            position: absolute;
+            background-color: $eachPersonBackgroundHoverActive;
+            min-width: 186px;
+            overflow: auto;
+            box-shadow: 0px 0px 10px #D6DEE0;
+            @include radius(3px);
+            z-index: 1;
+            font-size: 14px;
+            right:0;
+            top: 50px;
+            button, a {
+              color: $textColor;
+              padding: 12px 16px;
+              text-decoration: none;
+              display: flex;
+              flex-direction: row;
+              justify-content: start;
+              align-items: center;
+              align-content: center;
+              border: none;
+              width:100%;
+              >i{
+                margin-right: 8px;
+                width:18px;
+                height:18px;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                align-content: center;
+              }
+              &:hover {
+                background-color: $headerBackground;
+              }
+            }
+            
+          }
+          .show {
+            display: block;
+          }
+        }
       }
-      .searchArea{
+      .searchMainArea{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        align-content: center;
         width: 100%;
         padding: 14px;
-        position:relative;
-        .search{
-          width:100%;
-          background-color: $searchBackground;
-          border:none;
-          border-radius: 4px;
-          padding:10px 14px 10px 40px;
+        .searchArea{
+          position:relative;
+          width: calc(100% - 36.5px);
+          .search{
+            width:100%;
+            background-color: $searchBackground;
+            border:none;
+            border-radius: 4px;
+            padding:10px 14px 10px 40px;
+            color: $textColor;
+          }
+          .search:focus{
+            background-color: $searchBackgroundHover;
+          }
+          .search::placeholder{
+            color: $time;
+          }
+          >i{
+            position: absolute;
+            left:14px;
+            top:13px;
+            color: $time;
+          }
+        }
+        .newChatButton{
+          font-size: 20px;
           color: $textColor;
-        }
-        .search:focus{
-          background-color: $searchBackgroundHover;
-        }
-        .search::placeholder{
-          color: $time;
-        }
-        >i{
-          position: absolute;
-          left:28px;
-          top:27px;
-          color: $time;
+          width: 22.5px;
+          height: 22.5px;
+          border: none;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          align-content: center;
+          background-color: transparent;
         }
       }
       .personList{
@@ -449,6 +582,7 @@ body {
         align-content: center;
         align-items: center;
         overflow: auto;
+        width: 100%;
         .eachPerson{
           display: flex;
           flex-direction: row;
@@ -457,6 +591,7 @@ body {
           align-items: center;
           padding: 14px;
           position: relative;
+          width:100%;
           hr{
             margin:0 14px;
             height: 0;
@@ -489,6 +624,7 @@ body {
             justify-content: space-between;
             align-content: start;
             align-items: start;
+            width: 283.52px;
             .name{
               font-size: 16px;
               font-weight: bold;
@@ -563,6 +699,54 @@ body {
             }
           }
         }
+        .contacts{
+          justify-content: start;
+          .content{
+            width: calc(100% - 60px);
+            height:auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            align-content: center;
+            .actions{
+              >button{
+                border:none;
+                font-size: 16px;
+                @include radius(10px);
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                align-content: center;
+                color: white;
+                padding:10px 12px;
+                >i{
+                  width:16px;
+                  height:16px;
+                  @include radius(50%);
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: center;
+                  align-items: center;
+                  align-content: center;
+                  margin-right:8px;
+                }
+              }
+              .startChat{
+                background-image: $logoColor;
+              }
+              .editPerson{
+                background-color: transparent;
+                color:$info;
+                //border: 1px solid $info;
+              }
+            }
+          }
+          &:hover{
+            cursor: default;
+          }
+        }
         &::-webkit-scrollbar {
           width: 8px;
         }
@@ -581,25 +765,161 @@ body {
           box-shadow: none; 
         }
       }
+      .profileArea{
+        display:flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+        align-content: center;
+        padding: 40px 14px 14px 14px;
+        width:100%;
+        position: relative;
+        .close{
+          color: $textColor;
+          font-size: 20px;
+          position:absolute;
+          top:14px;
+          right:14px;
+          @include radius(50%);
+          border: none;
+          display:flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          align-content: center;
+          width: 30px;
+          height: 30px;
+          background-color: transparent;
+          transition: 0.2s;
+          &:hover{
+            background-color: $headerBackground;
+            transition: 0.2s;
+          }
+        }
+        .profileImg{
+          width:250px;
+          height: 250px;
+          @include radius(50%);
+          object-fit: cover;
+        }
+        .nameArea{
+          margin-top: 30px;
+          display:flex;
+          flex-direction: column;
+          align-items: start;
+          align-content: start;
+          width:100%;
+          position: relative;
+          label{
+            padding-bottom: 8px;
+            padding-left:7px;
+            font-size: 14px;
+          }
+          input{
+            width:100%;
+            background-color: $searchBackground;
+            border:none;
+            border-radius: 4px;
+            padding:10px 40px 10px 14px;
+            color: $textColor;
+          }
+          a{
+            position: absolute;
+            bottom: 14px;
+            right: 13px;
+            @include radius(50%);
+            display:block;
+            color: $approveColor;
+          }
+        }
+        .buttonArea{
+          display:flex;
+          flex-direction: row;
+          justify-content: end;
+          align-items: center;
+          align-content: center;
+          margin-top: 30px;
+          width:100%;
+          .updateProfile{
+            background-image: $logoColor;
+            text-align: center;
+            padding: 8px 15px;
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 17px;
+            cursor: pointer;
+            color: white;
+            &:disabled{
+              background-image: $logoColorDisabled;
+              cursor:wait;
+            }
+          }
+        }
+      }
+      .createPersonArea{
+        .profileImg{
+          width: 150px;
+          height:150px;
+        }
+        button{
+          text-align: center;
+          padding: 8px 15px;
+          border: none;
+          outline: none;
+          border-radius: 5px;
+          font-size: 14px;
+          line-height: 17px;
+          cursor: pointer;
+          color: white;
+        }
+        .buttonsArea{
+          width:100%;
+          display:flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          align-content: center;
+          margin-top: 30px;
+        }
+        .create{
+          background-image: $logoColor;
+          &:disabled{
+            background-image: $logoColorDisabled;
+            cursor:wait;
+          }
+        }
+        .cancel{
+          background-color: $cancel;
+          &:disabled{
+            background-color: $cancelDisabled;
+            cursor:wait;
+          }
+        }
+      }
     }
     .personDetail{
       border-left: 1px solid $border;
       height:100%;
       position:relative;
+      background-color: #F0EDE8;
+      z-index: 5;
+      @include top-right-radius($mainRadius);
+      @include bottom-right-radius($mainRadius);
+      width: calc(100% - 446.98px);
       .bodybackground{
-        background-color: white;
-        opacity: 0.74;
+        opacity: 0.5;
         position: absolute;
         left:0;
         top:0;
         width: 100%;
         height: 100%;
-        z-index: -1;
-        object-fit: cover;
-        object-position: center;
-        filter:brightness(89%);
+        z-index: 10;
         @include top-right-radius($mainRadius);
         @include bottom-right-radius($mainRadius);
+        background-image: url("../images/chat-bg.png");
+        background-repeat: repeat;
       }
       .header{
         display: flex;
@@ -612,6 +932,8 @@ body {
         width: 100%;
         background-color: $headerBackground;
         @include top-right-radius($mainRadius);
+        position:relative;
+        z-index: 15;
         .infoArea{
           display: flex;
           flex-direction: row;
@@ -668,6 +990,8 @@ body {
         height: calc(100% - 143px);
         @include top-right-radius($mainRadius);
         @include bottom-right-radius($mainRadius);
+        position:relative;
+        z-index: 15;
         .eachMessage{
           width: 100%;
           margin-bottom:14px;
@@ -701,7 +1025,6 @@ body {
                 position: absolute;
                 right: 14px;
                 bottom: 7px;
-                color: $time;
                 line-height: 1.3;
               }
             }
@@ -736,6 +1059,9 @@ body {
                 border-bottom: 15px solid transparent;
                 border-top-left-radius: 5px;
               }
+              .time{
+                color: $time;
+              }
             }
           }
         }
@@ -768,6 +1094,9 @@ body {
                 border-bottom: 15px solid transparent;
                 border-top-right-radius: 5px;
               }
+              .time{
+                color: $timeMe;
+              }
             }
           }
         }
@@ -782,6 +1111,8 @@ body {
         padding: 14px 20px;
         border-top: 1px solid $border;
         @include bottom-right-radius($mainRadius);
+        position:relative;
+        z-index: 15;
         .text{
           width: calc(100% - 54px);
           height: 40px;
@@ -815,7 +1146,11 @@ body {
 }
 // Index (end)
 
+
+
 /****************************************************************************/
+
+
 
 // Login (begin)
 
@@ -831,7 +1166,7 @@ body {
       height:100%;
       object-fit: cover;
       object-position: center;
-      filter: blur(8px);
+      //filter: blur(8px);
   }
 }
 
@@ -898,13 +1233,13 @@ body {
                   justify-content: center;
                   align-content: center;
                   align-items: center;
-                  margin-bottom: 20px;
+                  margin-bottom: 30px; //20px;
                   >i {
                       font-size: 70px;
                   }
                   img{
+                      width: 75%; //100%;
                       height: 100%;
-                      width:100%;
                       object-fit: cover;
                       object-position: center;
                   }
@@ -938,11 +1273,12 @@ body {
           }
 
           .loginSubmitButton {
-              background-color: $logoColor;
-              color: rgb(80, 80, 80);
+              //background-color: $headerBackground;
+              background-image: $logoColor;
+              color: white; //$textColor;
               text-align: center;
-              padding: 12px 30px;
-              border: 2px solid transparent;
+              padding: 11px /*12px*/ 30px;
+              border: none; //2px solid transparent;
               outline: none;
               @include radius(5px);
               transition: 0.2s;
@@ -967,11 +1303,12 @@ body {
                   align-content: center;
                   font-size: 15px;
                   margin-bottom: 0;
-                  background-color: $color3;
-                  color: $languageHoverColor;
+                  background-color: $eachPersonBackgroundHoverActive;
+                  //background-image: $logoColor;
+                  color: $textColor;
                   border-top-left-radius: 5px;
                   border-bottom-left-radius: 5px;
-                  border: 1px solid $color24;
+                  border: 1px solid $border;
                   border-right: none;
               }
 
@@ -979,11 +1316,36 @@ body {
                   height: 40px;
                   border-top-right-radius: 5px;
                   border-bottom-right-radius: 5px;
+                  font-size: 14px;
+                  color: $textColor;
 
                   &:focus {
-                      border: 1px solid $logoColor;
+                      border: 1px solid $border;
+                      box-shadow: none;
                   }
               }
+          }
+          .signup{
+            display:flex;
+            flex-direction: row;
+            justify-content: start;
+            align-items: center;
+            align-content: center;
+            font-size: 14px;
+            text-decoration: underline;
+            color: $textColor;
+            a {
+                display:block;
+                width:fit-content;
+                height:fit-content;
+                font-size: 15px;
+                text-decoration: underline;
+                text-align: center;
+                color: $link;
+                &:hover{
+                    color: $textColor;
+                }
+            }
           }
           .forgetPasswordArea{
               margin-top:25px;
@@ -992,16 +1354,18 @@ body {
               justify-content: center;
               align-items: center;
               align-content: center;
-              >a {
+              color: $textColor;
+              font-size: 14px;
+              a {
                   display:block;
                   width:fit-content;
                   height:fit-content;
                   font-size: 15px;
                   text-decoration: underline;
                   text-align: center;
-                  color: $languageColor;
+                  color: $link;
                   &:hover{
-                      color: $languageHoverColor;
+                      color: $textColor;
                   }
               }
           }
@@ -1010,3 +1374,82 @@ body {
 }
 
 // Login (end)
+
+/******************************************************************/
+
+// 404 not found page (begin)
+.notFoundPage{
+  display:flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  width: 100%;
+  height:100%;
+  >ul{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    color:$textColor;
+    >li{
+      &:first-child{
+        font-size: 15rem;
+        border-bottom: 0.5rem solid $textColor;
+      }
+      &:nth-child(2){
+        font-size: 5.5rem;
+      }
+      &:nth-child(3){
+        font-size: 1.2rem;
+      }
+      &:last-child{
+        background-color: $headerBackground;
+        padding: 10px 0;
+        width:100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        font-size: 1.6rem;
+        margin-top:10px;
+        >a{
+          color: $textColor;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
+// 404 not found page (end)
+
+
+// ajax loader
+#ajaxLoader {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+#ajaxChatDetailLoader {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}

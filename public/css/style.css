@@ -348,7 +348,7 @@ input::-webkit-inner-spin-button {
 }
 
 .form-check input:checked ~ label:before {
-  border: 1px solid #D6DDE0;
+  border: 1px solid linear-gradient(to right top, #0EBA59, #137A42);
 }
 
 .form-check label::before {
@@ -372,7 +372,7 @@ input::-webkit-inner-spin-button {
   position: absolute;
   left: -16.3px;
   top: 2px;
-  color: #D6DDE0;
+  color: linear-gradient(to right top, #0EBA59, #137A42);
   font-size: 11px;
   display: none;
 }
@@ -406,6 +406,14 @@ body {
 
 /* scroll bar end */
 /****************************************************************************/
+/* alerts (begin) */
+.alert-danger {
+  font-size: 14px;
+  line-height: 1.2;
+  padding: 0.75rem 1.25rem;
+}
+
+/* alerts (end) */
 .surface {
   display: flex;
   width: 100%;
@@ -426,6 +434,45 @@ body {
   box-shadow: 0px 0px 10px #D6DEE0;
   border: 1px solid #D6DEE0;
   border-radius: 10px;
+  position: relative;
+  z-index: 50;
+}
+.surface .main .mainSettings {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  align-content: start;
+  position: absolute;
+  box-shadow: 0px 0px 10px #D6DEE0;
+  z-index: 100;
+  left: -55px;
+  top: 143px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background-color: #F9FBFB;
+  border: 1px solid #D6DEE0;
+  width: 55px;
+}
+.surface .main .mainSettings > button {
+  border: none;
+  transition: 0.2s;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  font-size: 22px;
+  width: 55px;
+  height: 55px;
+  background-color: transparent;
+  color: #2c343b;
+}
+.surface .main .mainSettings > button:hover {
+  background-color: #E4E8E9;
+}
+.surface .main .mainSettings > button.active {
+  background-color: #E4E8E9;
 }
 .surface .main .person {
   display: flex;
@@ -439,6 +486,8 @@ body {
   border-top-left-radius: 10px;
   -moz-border-bottom-left-radius: 10px;
   border-bottom-left-radius: 10px;
+  position: relative;
+  z-index: 150;
 }
 .surface .main .person .profileInfoArea {
   display: flex;
@@ -452,6 +501,7 @@ body {
   background-color: #E4E8E9;
   -moz-border-top-left-radius: 10px;
   border-top-left-radius: 10px;
+  width: 446.98px;
 }
 .surface .main .person .profileInfoArea .infoArea {
   display: flex;
@@ -459,6 +509,9 @@ body {
   justify-content: start;
   align-content: center;
   align-items: center;
+}
+.surface .main .person .profileInfoArea .infoArea:hover {
+  cursor: pointer;
 }
 .surface .main .person .profileInfoArea .infoArea .profilePhoto {
   width: 45px;
@@ -489,7 +542,7 @@ body {
   overflow: hidden;
   color: #A8A8A8;
 }
-.surface .main .person .profileInfoArea .settings {
+.surface .main .person .profileInfoArea .mySettings {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -497,15 +550,80 @@ body {
   align-items: center;
   font-size: 20px;
 }
-.surface .main .person .profileInfoArea .settings .settingButton {
+.surface .main .person .profileInfoArea .mySettings .settingButton {
   color: #2c343b;
 }
-.surface .main .person .searchArea {
+.surface .main .person .profileInfoArea .mySettings {
+  position: relative;
+  display: inline-block;
+}
+.surface .main .person .profileInfoArea .mySettings .settingsButton {
+  background-color: transparent;
+  color: #2c343b;
+  padding: 12px;
+  font-size: 20px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.surface .main .person .profileInfoArea .mySettings .settingsButton:hover, .surface .main .person .profileInfoArea .mySettings .settingsButton:focus {
+  background-color: #EEF0F0;
+}
+.surface .main .person .profileInfoArea .mySettings .settingsContent {
+  display: none;
+  position: absolute;
+  background-color: #EEF0F0;
+  min-width: 186px;
+  overflow: auto;
+  box-shadow: 0px 0px 10px #D6DEE0;
+  border-radius: 3px;
+  z-index: 1;
+  font-size: 14px;
+  right: 0;
+  top: 50px;
+}
+.surface .main .person .profileInfoArea .mySettings .settingsContent button, .surface .main .person .profileInfoArea .mySettings .settingsContent a {
+  color: #2c343b;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  align-content: center;
+  border: none;
+  width: 100%;
+}
+.surface .main .person .profileInfoArea .mySettings .settingsContent button > i, .surface .main .person .profileInfoArea .mySettings .settingsContent a > i {
+  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+.surface .main .person .profileInfoArea .mySettings .settingsContent button:hover, .surface .main .person .profileInfoArea .mySettings .settingsContent a:hover {
+  background-color: #E4E8E9;
+}
+.surface .main .person .profileInfoArea .mySettings .show {
+  display: block;
+}
+.surface .main .person .searchMainArea {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
   width: 100%;
   padding: 14px;
-  position: relative;
 }
-.surface .main .person .searchArea .search {
+.surface .main .person .searchMainArea .searchArea {
+  position: relative;
+  width: calc(100% - 36.5px);
+}
+.surface .main .person .searchMainArea .searchArea .search {
   width: 100%;
   background-color: #F2F2F2;
   border: none;
@@ -513,23 +631,36 @@ body {
   padding: 10px 14px 10px 40px;
   color: #2c343b;
 }
-.surface .main .person .searchArea .search:focus {
+.surface .main .person .searchMainArea .searchArea .search:focus {
   background-color: #EEEEEE;
 }
-.surface .main .person .searchArea .search::-moz-placeholder {
+.surface .main .person .searchMainArea .searchArea .search::-moz-placeholder {
   color: #ADADAD;
 }
-.surface .main .person .searchArea .search:-ms-input-placeholder {
+.surface .main .person .searchMainArea .searchArea .search:-ms-input-placeholder {
   color: #ADADAD;
 }
-.surface .main .person .searchArea .search::placeholder {
+.surface .main .person .searchMainArea .searchArea .search::placeholder {
   color: #ADADAD;
 }
-.surface .main .person .searchArea > i {
+.surface .main .person .searchMainArea .searchArea > i {
   position: absolute;
-  left: 28px;
-  top: 27px;
+  left: 14px;
+  top: 13px;
   color: #ADADAD;
+}
+.surface .main .person .searchMainArea .newChatButton {
+  font-size: 20px;
+  color: #2c343b;
+  width: 22.5px;
+  height: 22.5px;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  background-color: transparent;
 }
 .surface .main .person .personList {
   display: flex;
@@ -538,6 +669,7 @@ body {
   align-content: center;
   align-items: center;
   overflow: auto;
+  width: 100%;
 }
 .surface .main .person .personList .eachPerson {
   display: flex;
@@ -547,6 +679,7 @@ body {
   align-items: center;
   padding: 14px;
   position: relative;
+  width: 100%;
 }
 .surface .main .person .personList .eachPerson hr {
   margin: 0 14px;
@@ -582,6 +715,7 @@ body {
   justify-content: space-between;
   align-content: start;
   align-items: start;
+  width: 283.52px;
 }
 .surface .main .person .personList .eachPerson .content .name {
   font-size: 16px;
@@ -653,6 +787,51 @@ body {
 .surface .main .person .personList .eachPerson.active .bottomLine {
   bottom: -1px;
 }
+.surface .main .person .personList .contacts {
+  justify-content: start;
+}
+.surface .main .person .personList .contacts .content {
+  width: calc(100% - 60px);
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+}
+.surface .main .person .personList .contacts .content .actions > button {
+  border: none;
+  font-size: 16px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  color: white;
+  padding: 10px 12px;
+}
+.surface .main .person .personList .contacts .content .actions > button > i {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  margin-right: 8px;
+}
+.surface .main .person .personList .contacts .content .actions .startChat {
+  background-image: linear-gradient(to right top, #0EBA59, #137A42);
+}
+.surface .main .person .personList .contacts .content .actions .editPerson {
+  background-color: transparent;
+  color: #62d1f3;
+}
+.surface .main .person .personList .contacts:hover {
+  cursor: default;
+}
 .surface .main .person .personList::-webkit-scrollbar {
   width: 8px;
 }
@@ -670,29 +849,164 @@ body {
   background: #E4E8E9;
   box-shadow: none;
 }
+.surface .main .person .profileArea {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  align-content: center;
+  padding: 40px 14px 14px 14px;
+  width: 100%;
+  position: relative;
+}
+.surface .main .person .profileArea .close {
+  color: #2c343b;
+  font-size: 20px;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  transition: 0.2s;
+}
+.surface .main .person .profileArea .close:hover {
+  background-color: #E4E8E9;
+  transition: 0.2s;
+}
+.surface .main .person .profileArea .profileImg {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.surface .main .person .profileArea .nameArea {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  align-content: start;
+  width: 100%;
+  position: relative;
+}
+.surface .main .person .profileArea .nameArea label {
+  padding-bottom: 8px;
+  padding-left: 7px;
+  font-size: 14px;
+}
+.surface .main .person .profileArea .nameArea input {
+  width: 100%;
+  background-color: #F2F2F2;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 40px 10px 14px;
+  color: #2c343b;
+}
+.surface .main .person .profileArea .nameArea a {
+  position: absolute;
+  bottom: 14px;
+  right: 13px;
+  border-radius: 50%;
+  display: block;
+  color: #29E907;
+}
+.surface .main .person .profileArea .buttonArea {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+  align-content: center;
+  margin-top: 30px;
+  width: 100%;
+}
+.surface .main .person .profileArea .buttonArea .updateProfile {
+  background-image: linear-gradient(to right top, #0EBA59, #137A42);
+  text-align: center;
+  padding: 8px 15px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 17px;
+  cursor: pointer;
+  color: white;
+}
+.surface .main .person .profileArea .buttonArea .updateProfile:disabled {
+  background-image: linear-gradient(to right top, #10D162, #17934F);
+  cursor: wait;
+}
+.surface .main .person .createPersonArea .profileImg {
+  width: 150px;
+  height: 150px;
+}
+.surface .main .person .createPersonArea button {
+  text-align: center;
+  padding: 8px 15px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 17px;
+  cursor: pointer;
+  color: white;
+}
+.surface .main .person .createPersonArea .buttonsArea {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  margin-top: 30px;
+}
+.surface .main .person .createPersonArea .create {
+  background-image: linear-gradient(to right top, #0EBA59, #137A42);
+}
+.surface .main .person .createPersonArea .create:disabled {
+  background-image: linear-gradient(to right top, #10D162, #17934F);
+  cursor: wait;
+}
+.surface .main .person .createPersonArea .cancel {
+  background-color: #a5a9b5;
+}
+.surface .main .person .createPersonArea .cancel:disabled {
+  background-color: #A8A8A8;
+  cursor: wait;
+}
 .surface .main .personDetail {
   border-left: 1px solid #D6DEE0;
   height: 100%;
   position: relative;
+  background-color: #F0EDE8;
+  z-index: 5;
+  -moz-border-top-right-radius: 10px;
+  border-top-right-radius: 10px;
+  -moz-border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  width: calc(100% - 446.98px);
 }
 .surface .main .personDetail .bodybackground {
-  background-color: white;
-  opacity: 0.74;
+  opacity: 0.5;
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
-  -o-object-fit: cover;
-     object-fit: cover;
-  -o-object-position: center;
-     object-position: center;
-  filter: brightness(89%);
+  z-index: 10;
   -moz-border-top-right-radius: 10px;
   border-top-right-radius: 10px;
   -moz-border-bottom-right-radius: 10px;
   border-bottom-right-radius: 10px;
+  background-image: url("../images/chat-bg.png");
+  background-repeat: repeat;
 }
 .surface .main .personDetail .header {
   display: flex;
@@ -706,6 +1020,8 @@ body {
   background-color: #E4E8E9;
   -moz-border-top-right-radius: 10px;
   border-top-right-radius: 10px;
+  position: relative;
+  z-index: 15;
 }
 .surface .main .personDetail .header .infoArea {
   display: flex;
@@ -766,6 +1082,8 @@ body {
   border-top-right-radius: 10px;
   -moz-border-bottom-right-radius: 10px;
   border-bottom-right-radius: 10px;
+  position: relative;
+  z-index: 15;
 }
 .surface .main .personDetail .body .eachMessage {
   width: 100%;
@@ -805,7 +1123,6 @@ body {
   position: absolute;
   right: 14px;
   bottom: 7px;
-  color: #ADADAD;
   line-height: 1.3;
 }
 .surface .main .personDetail .body .you {
@@ -839,6 +1156,9 @@ body {
   border-bottom: 15px solid transparent;
   border-top-left-radius: 5px;
 }
+.surface .main .personDetail .body .you .subRegion .messageArea .time {
+  color: #ADADAD;
+}
 .surface .main .personDetail .body .me {
   display: flex;
   flex-direction: row;
@@ -856,7 +1176,7 @@ body {
 }
 .surface .main .personDetail .body .me .subRegion .messageArea {
   margin-right: 14px;
-  background-color: #B2ED8C;
+  background-color: #B6FCA9;
   border-top-right-radius: 0;
 }
 .surface .main .personDetail .body .me .subRegion .messageArea .message:before {
@@ -866,9 +1186,12 @@ body {
   top: 0;
   width: 0;
   height: 0;
-  border-left: 15px solid #B2ED8C;
+  border-left: 15px solid #B6FCA9;
   border-bottom: 15px solid transparent;
   border-top-right-radius: 5px;
+}
+.surface .main .personDetail .body .me .subRegion .messageArea .time {
+  color: #7c7a7a;
 }
 .surface .main .personDetail .footer {
   background-color: #E4E8E9;
@@ -881,6 +1204,8 @@ body {
   border-top: 1px solid #D6DEE0;
   -moz-border-bottom-right-radius: 10px;
   border-bottom-right-radius: 10px;
+  position: relative;
+  z-index: 15;
 }
 .surface .main .personDetail .footer .text {
   width: calc(100% - 54px);
@@ -926,7 +1251,6 @@ body {
      object-fit: cover;
   -o-object-position: center;
      object-position: center;
-  filter: blur(8px);
 }
 
 .loginHeadArea {
@@ -996,14 +1320,14 @@ body {
   justify-content: center;
   align-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 .loginHeadArea .loginSubArea .adminLoginFormArea .profilePhotoArea .profilePhoto > i {
   font-size: 70px;
 }
 .loginHeadArea .loginSubArea .adminLoginFormArea .profilePhotoArea .profilePhoto img {
+  width: 75%;
   height: 100%;
-  width: 100%;
   -o-object-fit: cover;
      object-fit: cover;
   -o-object-position: center;
@@ -1013,7 +1337,7 @@ body {
   text-align: center !important;
   font-size: 28px;
   margin-bottom: 0;
-  color: #D6DDE0;
+  color: linear-gradient(to right top, #0EBA59, #137A42);
 }
 .loginHeadArea .loginSubArea .adminLoginFormArea .m-b-20 {
   margin-bottom: 0;
@@ -1031,11 +1355,11 @@ body {
   margin-left: 20px;
 }
 .loginHeadArea .loginSubArea .adminLoginFormArea .loginSubmitButton {
-  background-color: #D6DDE0;
-  color: rgb(80, 80, 80);
+  background-image: linear-gradient(to right top, #0EBA59, #137A42);
+  color: white;
   text-align: center;
-  padding: 12px 30px;
-  border: 2px solid transparent;
+  padding: 11px 30px;
+  border: none;
   outline: none;
   border-radius: 5px;
   transition: 0.2s;
@@ -1060,30 +1384,35 @@ body {
   align-content: center;
   font-size: 15px;
   margin-bottom: 0;
-  background-color: #F2F2F2;
-  color: #4e5c67;
+  background-color: #EEF0F0;
+  color: #2c343b;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  border: 1px solid #721c24;
+  border: 1px solid #D6DEE0;
   border-right: none;
 }
 .loginHeadArea .loginSubArea .adminLoginFormArea .input-group input {
   height: 40px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
+  font-size: 14px;
+  color: #2c343b;
 }
 .loginHeadArea .loginSubArea .adminLoginFormArea .input-group input:focus {
-  border: 1px solid #D6DDE0;
+  border: 1px solid #D6DEE0;
+  box-shadow: none;
 }
-.loginHeadArea .loginSubArea .adminLoginFormArea .forgetPasswordArea {
-  margin-top: 25px;
+.loginHeadArea .loginSubArea .adminLoginFormArea .signup {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   align-content: center;
+  font-size: 14px;
+  text-decoration: underline;
+  color: #2c343b;
 }
-.loginHeadArea .loginSubArea .adminLoginFormArea .forgetPasswordArea > a {
+.loginHeadArea .loginSubArea .adminLoginFormArea .signup a {
   display: block;
   width: -webkit-fit-content;
   width: -moz-fit-content;
@@ -1094,8 +1423,107 @@ body {
   font-size: 15px;
   text-decoration: underline;
   text-align: center;
+  color: #4A5864;
+}
+.loginHeadArea .loginSubArea .adminLoginFormArea .signup a:hover {
   color: #2c343b;
 }
-.loginHeadArea .loginSubArea .adminLoginFormArea .forgetPasswordArea > a:hover {
-  color: #4e5c67;
+.loginHeadArea .loginSubArea .adminLoginFormArea .forgetPasswordArea {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  color: #2c343b;
+  font-size: 14px;
+}
+.loginHeadArea .loginSubArea .adminLoginFormArea .forgetPasswordArea a {
+  display: block;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  font-size: 15px;
+  text-decoration: underline;
+  text-align: center;
+  color: #4A5864;
+}
+.loginHeadArea .loginSubArea .adminLoginFormArea .forgetPasswordArea a:hover {
+  color: #2c343b;
+}
+
+/******************************************************************/
+.notFoundPage {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  width: 100%;
+  height: 100%;
+}
+.notFoundPage > ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  color: #2c343b;
+}
+.notFoundPage > ul > li:first-child {
+  font-size: 15rem;
+  border-bottom: 0.5rem solid #2c343b;
+}
+.notFoundPage > ul > li:nth-child(2) {
+  font-size: 5.5rem;
+}
+.notFoundPage > ul > li:nth-child(3) {
+  font-size: 1.2rem;
+}
+.notFoundPage > ul > li:last-child {
+  background-color: #E4E8E9;
+  padding: 10px 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  font-size: 1.6rem;
+  margin-top: 10px;
+}
+.notFoundPage > ul > li:last-child > a {
+  color: #2c343b;
+  text-decoration: none;
+}
+
+#ajaxLoader {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+#ajaxChatDetailLoader {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
 }/*# sourceMappingURL=style.css.map */
