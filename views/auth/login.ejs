@@ -21,25 +21,52 @@
                 </div>
             </div>
 
-            <form id="adminLoginForm" action="" method="POST" class="formArea" autocomplete="on">
+            <form action="users/login" method="POST" class="formArea" autocomplete="on">
+
+                <% if (flashMessages) { %>
+
+                    <% if (flashMessages.success) { %>
+                        
+                        <ul class="alert alert-success">
+                            <% for (let j = 0; j < flashMessages.success.length; j ++) { %>
+                                <li><%= flashMessages.success[j] %></li>
+                            <% } %>
+                        </ul>
+
+                    <% }
+                    else if (flashMessages.error) { %>
+                            
+                        <ul class="alert alert-danger">
+                            <% for (j = 0; j < flashMessages.error.length; j ++) { %>
+                                <li><%= flashMessages.error[j] %></li>
+                            <% } %>
+                        </ul>
+
+                    <% } %>
+
+                <% } %>
 
                 <div class="input-group emailArea">
-                    <label for="email"><i class="far fa-user"></i></label>
-                    <input type="text" id="email" name="email" class="form-control" placeholder="E-mail *" autofocus/>
+                    <label for="email"><i class="fas fa-envelope"></i></label>
+                    <input type="text" name="email" class="form-control" placeholder="E-mail *" autofocus/>
                 </div>
                 <div class="input-group passwordArea">
-                    <label for="password"><i class="far fa-lock"></i></label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Password *" autofocus/>
+                    <label for="password"><i class="fas fa-key"></i></label>
+                    <input type="password" name="password" class="form-control" placeholder="Password *" autofocus/>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <button type="submit" class="loginSubmitButton">
-                            LOGIN
+                            Login
                         </button>
                     </div>
                 </div>
+                <div class="row forgetPasswordArea">
+                    Don't have an account? <a href="/register">Sign up</a>
+                </div>
 
             </form>
+
         </div>
     </div>
 </div>

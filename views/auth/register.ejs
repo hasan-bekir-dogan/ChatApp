@@ -21,30 +21,56 @@
                 </div>
             </div>
 
-            <form id="adminLoginForm" action="" method="POST" class="formArea" autocomplete="on">
+            <form action="users/signup" method="POST" class="formArea" autocomplete="on">
+                
+                <% if (flashMessages) { %>
+
+                    <% if (flashMessages.success) { %>
+                        
+                        <ul class="alert alert-success">
+                            <% for (let j = 0; j < flashMessages.success.length; j ++) { %>
+                                <li><%= flashMessages.success[j] %></li>
+                            <% } %>
+                        </ul>
+
+                    <% }
+                    else if (flashMessages.error) { %>
+                            
+                        <ul class="alert alert-danger">
+                            <% for (let j = 0; j < flashMessages.error.length; j ++) { %>
+                                <li><%= flashMessages.error[j] %></li>
+                            <% } %>
+                        </ul>
+
+                    <% } %>
+
+                <% } %>
 
                 <div class="input-group nameArea">
-                    <label for="email"><i class="far fa-user"></i></label>
-                    <input type="text" name="name" class="form-control" placeholder="Name" autofocus/>
+                    <label for="email"><i class="fas fa-user"></i></label>
+                    <input type="text" name="name" class="form-control" placeholder="Name *" autofocus/>
                 </div>
                 <div class="input-group emailArea">
-                    <label for="email"><i class="far fa-user"></i></label>
-                    <input type="text" name="email" class="form-control" placeholder="E-mail *" autofocus/>
+                    <label for="email"><i class="fas fa-envelope"></i></label>
+                    <input type="email" name="email" class="form-control" placeholder="E-mail *" autofocus/>
                 </div>
                 <div class="input-group passwordArea">
-                    <label for="password"><i class="far fa-lock"></i></label>
+                    <label for="password"><i class="fas fa-key"></i></label>
                     <input type="password" name="password" class="form-control" placeholder="Password *" autofocus/>
                 </div>
                 <div class="input-group passwordArea">
-                    <label for="password"><i class="far fa-lock"></i></label>
-                    <input type="password" name="confirmpassword" class="form-control" placeholder="Confirm Password *" autofocus/>
+                    <label for="password"><i class="fas fa-key"></i></label>
+                    <input type="password" name="confirmPassword" class="form-control" placeholder="Confirm Password *" autofocus/>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <button type="submit" class="loginSubmitButton">
-                            SIGN UP
+                            Sign up
                         </button>
                     </div>
+                </div>
+                <div class="row forgetPasswordArea">
+                    Already, Are you member? <a href="/login">Login</a>
                 </div>
 
             </form>
