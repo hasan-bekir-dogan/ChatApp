@@ -62,7 +62,7 @@ function showContacts() {
         for (let i = 0; i < contactsdata.length; i++) {
           contactshtml += `<div class="eachPerson contacts">
                                         <hr class="topLine">
-                                        <img class="profilePhoto" src="/images/profile-photo3.png" alt="">
+                                        <img class="profilePhoto" src="/images/default-image.png" alt="">
                                         <div class="content">
                                             <div class="name">
                                                 ${contactsdata[i].name}
@@ -410,7 +410,7 @@ function showProfile() {
                             <button class="close" onclick="showChat()" title="Close">
                                 <i class="fas fa-times"></i>
                             </button>
-                            <img src="/images/profile-photo.png" class="profileImg" alt="">
+                            <img src="/images/default-image.png" class="profileImg" alt="">
                             <div class="nameArea">
                                 <label for="name">Your Name</label>
                                 <input type="text" name="name" id="name" value="${profilename}">
