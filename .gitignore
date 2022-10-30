@@ -142,6 +142,6 @@ dist
 .svelte-kit
 
 # private folders
-.public/images/old-image
+#.public/images/old-image
 
 # End of https://www.toptal.com/developers/gitignore/api/node
