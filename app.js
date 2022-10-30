@@ -13,6 +13,22 @@ const messageRoute = require("./routes/messageRoute");
 
 const app = express();
 
+var http = require("http").Server(app);
+var io = require("socket.io")(http);
+
+io.on('connection', () => {
+  console.log('the user is connected')
+})
+
+io.on('connection', (socket) => {
+  socket.on('chat message', msg => {
+    io.emit('chat message', msg);
+  });
+});
+
+// it is to use in controllers
+app.set('io', io);
+
 // Connect to Database
 mongoose
   .connect("mongodb://localhost/chatapp", {
@@ -72,6 +88,6 @@ app.use((req, res, next) => {
 });
 
 const port = 5000;
-app.listen(port, () => {
+var server = http.listen(port, () => {
   console.log(`App started on port ${port}`);
 });

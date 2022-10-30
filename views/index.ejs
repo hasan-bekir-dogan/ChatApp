@@ -3,21 +3,28 @@
 
     <div class="surface">
         <div class="main">
-            <div class="mainSettings" id="mainSettingArea">
-                <button class="contacts">
-                    <i class="fas fa-users"></i>
-                </button>
-                <button class="chat active">
-                    <i class="fas fa-comment"></i>
-                </button>
-                <button class="profile">
-                    <i class="fas fa-user-circle"></i>
-                </button>
+            <div class="mySettingsMain">
+                <div class="mainSettings" id="mainSettingArea">
+                    <button class="contacts">
+                        <i class="fas fa-users"></i>
+                    </button>
+                    <button class="chat active">
+                        <i class="fas fa-comment"></i>
+                    </button>
+                    <button class="profile">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                </div>
+                <div class="logoutArea">
+                    <button class="logout" onclick="window.location.href = `/users/logout`">
+                        <i class="fas fa-sign-out"></i>
+                    </button>
+                </div>
             </div>
             <div class="person">
                 <div class="profileInfoArea">
                     <div class="infoArea">
-                        <img class="profilePhoto" src="/images/profile-photo.png" alt="">
+                        <img class="profilePhoto" src="/images/default-image.png" alt="">
                         <div class="content">
                             <div class="name">
                                 <%= myName %>
@@ -42,38 +49,19 @@
                 
 
             </div>
-            <div class="personDetail">
-                <div class="bodyBackground"></div>
-                <div class="header">
-                    <div class="infoArea">
-                        <img class="profilePhoto" src="/images/profile-photo2.png" alt="">
-                        <div class="content">
-                            <div class="name">
-                                Aamir Khan
-                            </div>
-                            <div class="shortDetail">
-                                aamir.khan@hotmail.com
-                            </div>
-                        </div>
+            <div class="personDetail mainPage">
+                <div class="mainPageDetail">
+                    <div class="logo">
+                        <!--<img src="/images/logo.png" alt="">-->
+                        <i class="fas fa-users"></i> <i class="fas fa-comments-alt"></i>
                     </div>
-                    <div class="settings">
-                        <a class="settingButton" href="#">
-                            <i class="far fa-info-circle"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="body">
-                    
-                </div>
-                <div class="footer">
-                    <textarea class="text" name="text" placeholder="Type a message"></textarea>
-                    <button class="sendButton">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
+                    <div class="title">ChatApp</div>
+                    <div class="text">Send and receive messages using email address.</div>
                 </div>
             </div>
         </div>
     </div>
+    
     
 
 <%- include('partials/_footer'); %>
