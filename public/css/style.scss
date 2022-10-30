@@ -361,23 +361,28 @@ body {
     @include radius($mainRadius);
     position: relative;
     z-index: 50;
-    .mainSettings{
+    .mySettingsMain{
+      background-color: $sidebarBackground;
+      @include top-left-radius($mainRadius);
+      @include bottom-left-radius($mainRadius);
+      width:fit-content;
+      height:100%;
+      border-right: 1px solid $border;
       display:flex;
       flex-direction: column;
-      justify-content: start;
-      align-items: start;
-      align-content: start;
-      position: absolute;
-      box-shadow: 0px 0px 10px $border;
-      z-index: 100;
-      left:-55px;
-      top: 143px;
-      border-top-left-radius: 10px;
-      border-bottom-left-radius: 10px;
-      background-color: $personListBackground;
-      border:1px solid $border;
-      width: 55px;
-      >button{
+      justify-content: space-between;
+      align-items: center;
+      align-content: center;
+      .mainSettings{
+        display:flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        align-content: start;
+        width: 55px;
+        padding-top:130px;
+      }
+      button{
         border: none;
         transition: 0.2s;
         display:flex;
@@ -386,15 +391,22 @@ body {
         align-items: center;
         align-content: center;
         font-size: 22px;
-        width: 55px;
+        width: 100%;
         height: 55px;
         background-color: transparent;
-        color: $textColor;
+        color: $sidebarcolor;
         &:hover{
-          background-color: $headerBackground;
+          background-color: $personListBackground;
         }
         &.active{
-          background-color: $headerBackground;
+          background-color: $personListBackground;
+        }
+      }
+      .logoutArea{
+        width:55px;
+        @include bottom-left-radius($mainRadius);
+        >button{
+          @include bottom-left-radius($mainRadius);
         }
       }
     }
@@ -406,10 +418,11 @@ body {
       align-items: center;
       height: 100%;
       background-color: $personListBackground;
-      @include top-left-radius($mainRadius);
-      @include bottom-left-radius($mainRadius);
+      //@include top-left-radius($mainRadius);
+      //@include bottom-left-radius($mainRadius);
       position:relative;
       z-index:150;
+      width: 30.5%;
       .profileInfoArea{
         display: flex;
         flex-direction: row;
@@ -420,8 +433,8 @@ body {
         border-bottom: 1px solid $border;
         width: 100%;
         background-color: $profileInfoBackground;
-        @include top-left-radius($mainRadius);
-        width: 446.98px;
+        //@include top-left-radius($mainRadius);
+        //width: 446.98px;
         .infoArea{
           display: flex;
           flex-direction: row;
@@ -627,12 +640,15 @@ body {
             width: 283.52px;
             .name{
               font-size: 16px;
+              line-height: 18px;
+              height: 18px;
+              overflow:hidden;
               font-weight: bold;
             }
             .shortDetail{
               font-size: 14px;
-              height: 14px;
-              line-height: 1;
+              height: 17px;
+              line-height: 17px;
               overflow: hidden;
               color: $shortText;
             }
@@ -907,7 +923,7 @@ body {
       z-index: 5;
       @include top-right-radius($mainRadius);
       @include bottom-right-radius($mainRadius);
-      width: calc(100% - 446.98px);
+      width: calc(79.5% - 55px);
       .bodybackground{
         opacity: 0.5;
         position: absolute;
@@ -992,6 +1008,7 @@ body {
         @include bottom-right-radius($mainRadius);
         position:relative;
         z-index: 15;
+        overflow: auto;
         .eachMessage{
           width: 100%;
           margin-bottom:14px;
@@ -1026,6 +1043,26 @@ body {
                 right: 14px;
                 bottom: 7px;
                 line-height: 1.3;
+              }
+              .deleteMessage{
+                background-color: transparent;
+                color: $textColor;
+                font-size: 15px;
+                border: none;
+                @include bottom-left-radius(50%);
+                padding: 4px 8px 4px 8px;
+                cursor: pointer;
+                position: absolute;
+                right:0;
+                top:0;
+                display:none;
+                transition: 0.2s;
+              }
+              &:hover{
+                .deleteMessage{
+                  display:block;
+                  transition: 0.2s;
+                }
               }
             }
           }
@@ -1082,6 +1119,8 @@ body {
               margin-right: 14px;
               background-color: $meBackground; // #B2ED8C
               border-top-right-radius: 0;
+              position: relative;
+              z-index: 100;
               .message:before{
                 content: "";
                 position: absolute;
@@ -1097,8 +1136,26 @@ body {
               .time{
                 color: $timeMe;
               }
+              
             }
           }
+        }
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+        &::-webkit-scrollbar-track {
+          box-shadow: none; 
+          background-color: transparent;
+          border-radius: 10px;
+        }
+        &::-webkit-scrollbar-thumb {
+          border-radius: 0px;
+          border:none;
+          background: $headerBackground; 
+        }
+        &::-webkit-scrollbar-thumb:hover {
+          background: $headerBackground; 
+          box-shadow: none; 
         }
       }
       .footer{
@@ -1120,6 +1177,7 @@ body {
           border:1px solid white;
           border-radius: 4px;
           padding:10px 14px;
+          resize:none;
         }
         .text:focus{
           border:1px solid $border;
@@ -1139,6 +1197,37 @@ body {
         }
         .sendButton:hover{
           background-color: $searchBackground;
+        }
+      }
+    }
+    .mainPage{
+      background-color: $headerBackground;
+      .mainPageDetail{
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        width:100%;
+        height:100%;
+        .logo{
+          width:277px;
+          display:flex;
+          flex-direction: row;
+          justify-content: space-around;
+          align-items: center;
+          align-content: center;
+          margin-bottom: 27px;
+          font-size: 87px;
+          color: $time;
+          >i{
+            opacity: 0.9;
+          }
+        }
+        .title{
+          font-size: 32px;
+          margin-bottom: 10px;
+          color: $textColor;
         }
       }
     }

@@ -7,7 +7,12 @@ exports.getChat = async (req, res) => {
     const senderUserId = req.session.userId;
     let senderUser = 1;
 
-    let chat = await Chat.find()
+    let chat = await Chat.find({
+      $or: [
+        {user1Id: senderUserId},
+        {user2Id: senderUserId}
+      ]
+    })
       .populate("user1MessageId")
       .populate("user2MessageId");
 
@@ -23,6 +28,7 @@ exports.getChat = async (req, res) => {
           receiveruserid = chat[i].user2Id;
         }
         else{
+          senderUser = 2;
           receiveruserid = chat[i].user1Id;
         }
 
@@ -78,6 +84,11 @@ exports.getChat = async (req, res) => {
 exports.getChatDetail = async (req, res) => {
   try {
     const senderUserId = req.session.userId;
+    const receiver = await User.findById(req.body.receiverUserId);
+
+    // receiver name and email
+    let recevierName = receiver.name;
+    let recevierEmail = receiver.email;
 
     let senderUser = 1;
     let chat = await Chat.findOne({
@@ -129,6 +140,8 @@ exports.getChatDetail = async (req, res) => {
     res.status(200).json({
       data: {
         messages,
+        recevierName,
+        recevierEmail
       },
       status: "success",
     });
