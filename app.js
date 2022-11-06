@@ -21,9 +21,12 @@ io.on('connection', () => {
 })
 
 io.on('connection', (socket) => {
-  socket.on('chat message', msg => {
-    io.emit('chat message', msg);
+  socket.on('add chat message', msg => {
+    io.emit('add chat message', msg);
   });
+  socket.on('delete chat message', (msg) => {
+    io.emit('delete chat message', msg)
+  })
 });
 
 // it is to use in controllers
@@ -73,6 +76,7 @@ app.use(
 // Routes
 app.use("*", (req, res, next) => {
   userIn = req.session.userId;
+  userId = req.session.userId;
   next();
 });
 app.use("/", pageRoute);

@@ -1,4 +1,3 @@
-
 function showChatAjaxLoader() {
   let ajaxloader = "";
 
@@ -31,6 +30,7 @@ function showChatDetailAjaxLoader() {
 function hideChatDetailAjaxLoader() {
   $("#ajaxChatDetailLoader").remove();
 }
+
 
 function showContacts() {
   showChatAjaxLoader();
@@ -227,17 +227,23 @@ function showChat() {
                                     ${chat[i].name}
                                 </div>
                                 <div class="shortDetail">`;
-          
-          if (chat[i].type == 'sender'){
-            chathtml += 'Me: ';
+
+          if (chat[i].type == "sender") {
+            chathtml += "Me: ";
           }
 
           chathtml += `             ${chat[i].lastMessage}
                                 </div>
                             </div>
                             <div class="time">`;
-          
-          date = new Date(chat[i].date).toLocaleDateString('en-GB', { year:"numeric", month:"short", day:"numeric", hour:"numeric", minute:"numeric"}) ;
+
+          date = new Date(chat[i].date).toLocaleDateString("en-GB", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+          });
 
           chathtml += String(date);
 
@@ -268,38 +274,43 @@ function showChatDetail(p_receiverUserId) {
     method: "POST",
     dataType: "json",
     data: {
-      receiverUserId: p_receiverUserId
+      receiverUserId: p_receiverUserId,
     },
     success: (response) => {
       if (response.status == "success") {
         let chatdetailhtml = "";
-        let chatmaindetailhtml = '';
+        let chatmaindetailhtml = "";
         let messages = response.data.messages;
         let receiverName = response.data.recevierName;
         let receiverEmail = response.data.recevierEmail;
         let date;
-        let message = '', endOfDate;
-        
+        let message = "",
+          endOfDate;
+
         // Chat each message
         for (let i = 0; i < messages.length; i++) {
-          chatdetailhtml += `<div class="eachMessage `; 
+          chatdetailhtml += `<div class="eachMessage `;
 
-          if (messages[i].usertype == 'sender')
-            chatdetailhtml += 'me';
-          else
-            chatdetailhtml += 'you';
+          if (messages[i].usertype == "sender") chatdetailhtml += "me";
+          else chatdetailhtml += "you";
 
-          chatdetailhtml += `">
+          chatdetailhtml += `" data-id="${messages[i]._id}">
                           <div class="subRegion">
                               <div class="messageArea">
                                   <div class="message">
                                       ${messages[i].text}
                                   </div>
                                   <div class="time">`;
-          date = new Date(messages[i].createdAt).toLocaleDateString('en-GB', { year:"numeric", month:"short", day:"numeric", hour:"numeric", minute:"numeric"}) ;
+          date = new Date(messages[i].createdAt).toLocaleDateString("en-GB", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+          });
 
           chatdetailhtml += String(date);
-                                      
+
           chatdetailhtml += `     </div>
                                   <button class="deleteMessage" onclick="deleteMessage('${messages[i]._id}')">
                                     <i class="far fa-times"></i>
@@ -308,17 +319,15 @@ function showChatDetail(p_receiverUserId) {
                           </div>
                       </div>`;
 
-          if (i == (messages.length - 1)) {
-            if (messages[i].usertype == 'sender')
-              message += 'Me: ';
-            
+          if (i == messages.length - 1) {
+            if (messages[i].usertype == "sender") message += "Me: ";
+
             message += messages[i].text;
             endOfDate = date;
           }
         }
 
-        if ($('.surface .main .personDetail').hasClass('mainPage')){
-          
+        if ($(".surface .main .personDetail").hasClass("mainPage")) {
           chatmaindetailhtml += `<div class="bodyBackground"></div>
                                   <div class="header">
                                       <div class="infoArea">
@@ -342,42 +351,51 @@ function showChatDetail(p_receiverUserId) {
                                     ${chatdetailhtml}
                                   </div>
                                   <div class="footer">
-                                      <textarea class="text" name="text" placeholder="Type a message"></textarea>
+                                      <textarea class="text" name="text" placeholder="Type a message" onkeypress="sendMessageKeyPress(event)"></textarea>
                                       <button class="sendButton" onclick="sendMessage()">
                                           <i class="fas fa-paper-plane"></i>
                                       </button>
                                   </div>`;
-          
-          $('.surface .main .personDetail').removeClass('mainPage');
-          $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`).addClass('active')
-          
-          $(".surface .main .personDetail").html(chatmaindetailhtml);          
-        }
-        else{
-          
+
+          $(".surface .main .personDetail").removeClass("mainPage");
+          $(
+            `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`
+          ).addClass("active");
+
+          $(".surface .main .personDetail").html(chatmaindetailhtml);
+        } else {
           // set receiver name and email in detail side
-          $('.personDetail .header .infoArea .content .name').html(receiverName);
-          $('.personDetail .header .infoArea .content .shortDetail').html(receiverEmail);
+          $(".personDetail .header .infoArea .content .name").html(
+            receiverName
+          );
+          $(".personDetail .header .infoArea .content .shortDetail").html(
+            receiverEmail
+          );
 
           // hide ajax loader
           hideChatDetailAjaxLoader();
 
           // set chat detail body
-          $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`).addClass('active')
-          
-          $(".surface .main .personDetail .body").html(chatdetailhtml);
+          $(
+            `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`
+          ).addClass("active");
 
+          $(".surface .main .personDetail .body").html(chatdetailhtml);
         }
 
-        $('.surface .main .personDetail').attr('data-id', p_receiverUserId)
+        $(".surface .main .personDetail").attr("data-id", p_receiverUserId);
 
         // scroll bottom on person detail area
-        let scroll_to_bottom = document.getElementById('chatBody');
-		    scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
+        let scroll_to_bottom = document.getElementById("chatBody");
+        scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
 
         // set active person info
-        $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .content .shortDetail`).html(message)
-        $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .time`).html(endOfDate)
+        $(
+          `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .content .shortDetail`
+        ).html(message);
+        $(
+          `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .time`
+        ).html(endOfDate);
       }
     },
     error: (response) => {
@@ -391,10 +409,10 @@ function showProfile() {
 
   var socket = io();
 
-  socket.on('msg', (msg) => {
-    console.log('chat message')
-  })
-  
+  socket.on("msg", (msg) => {
+    console.log("chat message");
+  });
+
   $.ajax({
     url: "/profile",
     method: "GET",
@@ -467,15 +485,15 @@ function showContactsToSendMessage() {
         contactshtml += `<div class="personList contactsArea">`;
 
         for (let i = 0; i < contactsdata.length; i++) {
-          contactshtml += `<div class="eachPerson contacts">
+          contactshtml += `<div class="eachPerson contacts" data-id="${contactsdata[i]._id}">
                                         <hr class="topLine">
-                                        <img class="profilePhoto" src="/images/profile-photo3.png" alt="">
+                                        <img class="profilePhoto" src="/images/default-image.png" alt="">
                                         <div class="content">
                                             <div class="name">
                                                 ${contactsdata[i].name}
                                             </div>
                                             <div class="actions">
-                                              <button class="startChat"><i class="fas fa-comment"></i>Message</button>
+                                              <button class="startChat" onclick="startChat('${contactsdata[i]._id}')"><i class="fas fa-comment"></i>Message</button>
                                             </div>
                                         </div>
                                         <hr class="bottomLine">
@@ -497,12 +515,11 @@ function showContactsToSendMessage() {
 }
 
 function sendMessage() {
-  let v_message = $('.surface .main .personDetail .footer .text').val();
+  let v_message = $(".surface .main .personDetail .footer .text").val();
 
-  if(v_message.trim() != '') {
-    //showChatDetailAjaxLoader();
-
-    let v_receiverUserId = $('.surface .main .personDetail').attr('data-id');
+  if (v_message.trim() != "") {
+    let v_receiverUserId = $(".surface .main .personDetail").attr("data-id");
+    let v_senderUserId = $(".surface .main .person .profileInfoArea").attr("data-id");
 
     $.ajax({
       url: "/message/send",
@@ -510,18 +527,22 @@ function sendMessage() {
       dataType: "json",
       data: {
         receiverUserId: v_receiverUserId,
-        text: v_message
+        text: v_message,
       },
       success: (response) => {
         if (response.status == "success") {
 
-          showChatDetail(v_receiverUserId);
-
           var socket = io();
-          socket.emit('chat message', v_message);
+          let o_message = {
+            senderUserId: v_senderUserId,
+            receiverUserId: v_receiverUserId,
+            messageId: response.data.messageId,
+            messageDate: response.data.messageDate,
+            text: v_message,
+          };
+          socket.emit("add chat message", o_message);
 
-          $('.surface .main .personDetail .footer .text').val('')
-
+          $(".surface .main .personDetail .footer .text").val("");
         }
       },
       error: (response) => {
@@ -532,21 +553,18 @@ function sendMessage() {
 }
 
 function deleteMessage(p_messageId) {
-
   Swal.fire({
-    title: 'Are you sure?',
+    title: "Are you sure?",
     text: "You won't be able to revert this!",
-    icon: 'warning',
+    icon: "warning",
     showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete it!'
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
   }).then((result) => {
     if (result.isConfirmed) {
-          
-      showChatDetailAjaxLoader();
 
-      let v_receiverUserId = $('.surface .main .personDetail').attr('data-id');
+      let v_receiverUserId = $(".surface .main .personDetail").attr("data-id");
 
       $.ajax({
         url: "/message/delete",
@@ -554,12 +572,17 @@ function deleteMessage(p_messageId) {
         dataType: "json",
         data: {
           receiverUserId: v_receiverUserId,
-          messageId: p_messageId
+          messageId: p_messageId,
         },
         success: (response) => {
           if (response.status == "success") {
-            showChatDetail(v_receiverUserId);
             
+            var socket = io()
+            let o_message = {
+              messageId: p_messageId
+            }
+            socket.emit('delete chat message', o_message)
+
             toastr.success("Message has been deleted.");
           }
         },
@@ -567,8 +590,98 @@ function deleteMessage(p_messageId) {
           toastr.error("You got an error!");
         },
       });
-      
     }
-  })
-  
+  });
+}
+
+function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messageDate,  p_text) {
+  v_currentUserId = $('.surface .main .person .profileInfoArea').attr('data-id');
+  let messagehtml = '';
+  let userType = '';
+  let lastMessage = '';
+
+  messagehtml += `<div class="eachMessage `;
+
+  if (v_currentUserId == p_senderUserId){
+    messagehtml += "me";
+    userType = 'Me: ';
+  }
+  else if(v_currentUserId == p_receiverUserId){
+    messagehtml += "you";
+  }
+
+  messagehtml += `" data-id="${p_messageId}">
+                  <div class="subRegion">
+                      <div class="messageArea">
+                          <div class="message">
+                              ${p_text}
+                          </div>
+                          <div class="time">`;
+
+  date = new Date(p_messageDate).toLocaleDateString("en-GB", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+
+  messagehtml += String(date);
+
+  messagehtml += `     </div>
+                          <button class="deleteMessage" onclick="deleteMessage('${p_messageId}')">
+                            <i class="far fa-times"></i>
+                          </button>
+                      </div>
+                  </div>
+              </div>`;
+
+  // update chat detail
+  $(messagehtml).insertAfter('.surface .main .personDetail .body .eachMessage:last-child')
+
+  // update chat
+  lastMessage = userType + p_text
+  $(`.surface .main .person .personList .eachPerson.active .content .shortDetail`).html(lastMessage)
+  $(`.surface .main .person .personList .eachPerson.active .time`).html(date)
+
+  // scroll bottom on person detail area
+  let scroll_to_bottom = document.getElementById("chatBody");
+  scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
+}
+
+function sendMessageKeyPress(event){
+  if(event.keyCode == 13){ // enter key code
+    if(!event.shiftKey){  // if it is not shift enter
+        sendMessage()
+    }
+  }
+}
+
+function deleteMessageFromHtml(p_messageId) {
+
+  if ($($(`.surface .main .personDetail .body .eachMessage:last-child`).attr('data-id') == p_messageId)) { // then it is last message. So, we need to update chat
+    // delete message
+    $(`.surface .main .personDetail .body .eachMessage[data-id="${p_messageId}"]`).remove();
+
+    // update chat
+    let date = $('.surface .main .personDetail .body .eachMessage:last-child .subRegion .messageArea .time').html()
+    let text = $('.surface .main .personDetail .body .eachMessage:last-child .subRegion .messageArea .message').html()
+    let userType = '';
+
+    if ($('.surface .main .personDetail .body .eachMessage:last-child').hasClass('me')) {
+      userType = 'Me: '
+    }
+
+    $('.surface .main .person .personList .eachPerson.active .content .shortDetail').html(userType + text)
+    $('.surface .main .person .personList .eachPerson.active .time').html(date)
+  }
+  else {
+    // delete message
+    $(`.surface .main .personDetail .body .eachMessage[data-id="${p_messageId}"]`).remove();
+  }
+
+}
+
+function startChat(p_receiverUserID) {
+  showChatDetail(p_receiverUserID)
 }
