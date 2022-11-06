@@ -8,5 +8,6 @@ const router = express.Router();
 
 router.route("/create").post(personController.createPerson);
 router.route("/list").get(personController.listPerson);
+router.route("/delete").delete(personController.deletePerson);
 
 module.exports = router;
