@@ -9,9 +9,4 @@ $(document).ready(function () {
     $('#myProfileSettings .btnCreatePerson, #mainSettingArea .createPerson').on('click', () => {
         showCreatePerson();
     })
-
-    // create person
-    $('#createPerson').on('click', () => {
-        createPerson();
-    })
 })

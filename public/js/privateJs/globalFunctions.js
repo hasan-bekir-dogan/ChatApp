@@ -1,3 +1,4 @@
+// ajax loader (begin)
 function showChatAjaxLoader() {
   let ajaxloader = "";
 
@@ -30,8 +31,11 @@ function showChatDetailAjaxLoader() {
 function hideChatDetailAjaxLoader() {
   $("#ajaxChatDetailLoader").remove();
 }
+// ajax loader (end)
 
 
+
+// contacts (begin)
 function showContacts() {
   showChatAjaxLoader();
 
@@ -60,7 +64,7 @@ function showContacts() {
         contactshtml += `<div class="personList contactsArea">`;
 
         for (let i = 0; i < contactsdata.length; i++) {
-          contactshtml += `<div class="eachPerson contacts">
+          contactshtml += `<div class="eachPerson contacts" data-id="${contactsdata[i]._id}">
                                         <hr class="topLine">
                                         <img class="profilePhoto" src="/images/default-image.png" alt="">
                                         <div class="content">
@@ -68,7 +72,7 @@ function showContacts() {
                                                 ${contactsdata[i].name}
                                             </div>
                                             <div class="actions">
-                                              <button class="editPerson"><i class="fas fa-edit"></i>Edit</button>
+                                              <button class="deletePerson" onclick="deletePerson('${contactsdata[i]._id}')"><i class="fas fa-trash-alt"></i></button>
                                             </div>
                                         </div>
                                         <hr class="bottomLine">
@@ -99,18 +103,13 @@ function showCreatePerson() {
                         <button class="close" onclick="showContacts()">
                             <i class="fas fa-times"></i>
                         </button>
-                        <img src="/images/default-image.png" class="profileImg" alt="Profile Photo">
-                        <div class="nameArea">
-                            <label for="personName">Name</label>
-                            <input type="text" name="personName" id="personName">
-                        </div>
-                        <div class="nameArea">
+                        <div class="formElement">
                             <label for="personEmail">E-mail</label>
                             <input type="text" name="personEmail" id="personEmail">
                         </div>
                         <div class="buttonsArea">
-                            <button class="cancel" id="cancelCreationPerson">Cancel</button>
-                            <button class="create" id="createPerson">Create</button>
+                            <button class="cancel" onclick="showContacts()">Cancel</button>
+                            <button class="create" onclick="createPerson()">Create</button>
                         </div>
                     </div>`;
 
@@ -121,12 +120,13 @@ function showCreatePerson() {
 }
 
 function createPerson() {
-  showChatAjaxLoader();
+  // get data
+  let personemail = $(".surface .main .person .profileArea.createPersonArea .formElement #personEmail").val();
 
-  let personemail = $("#personEmail").val();
-
-  $("#createPerson").prop("disabled", true);
-  $("#cancelCreationPerson").prop("disabled", true);
+  // disable elements
+  $(".surface .main .person .profileArea.createPersonArea .formElement #personEmail").prop("disabled", true);
+  $(".surface .main .person .profileArea.createPersonArea .buttonsArea .cancel").prop("disabled", true);
+  $(".surface .main .person .profileArea.createPersonArea .buttonsArea .create").prop("disabled", true);
 
   $.ajax({
     url: "/person/create",
@@ -137,48 +137,9 @@ function createPerson() {
     },
     success: (response) => {
       if (response.status == "success") {
-        toastr.success("The person successfully added to contacts.");
+        showContacts()
 
-        let contactshtml = "";
-
-        let contactsdata = response.data.contacts;
-
-        // Search
-        contactshtml += `<div class="searchMainArea">
-                                        <div class="searchArea">
-                                            <input type="text" class="search" placeholder="Search">
-                                            <i class="fas fa-search"></i>
-                                        </div>
-                                        <button class="newChatButton" onclick="showContacts()" title="Close">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>`;
-
-        // Contacts
-        contactshtml += `<div class="personList contactsArea">`;
-
-        for (let i = 0; i < contactsdata.length; i++) {
-          contactshtml += `<div class="eachPerson contacts">
-                                            <hr class="topLine">
-                                            <img class="profilePhoto" src="/images/profile-photo3.png" alt="">
-                                            <div class="content">
-                                                <div class="name">
-                                                    ${contactsdata[i].name}
-                                                </div>
-                                            </div>
-                                            <hr class="bottomLine">
-                                        </div>`;
-        }
-
-        contactshtml += `</div>`;
-
-        $("#createPerson").prop("disabled", false);
-        $("#cancelCreationPerson").prop("disabled", false);
-
-        hideChatAjaxLoader();
-        $("#mainSettingArea >button").removeClass("active");
-        $("#mainSettingArea .contacts").addClass("active");
-        $(contactshtml).insertAfter(".profileInfoArea");
+        toastr.success('Person successfully created.')
       }
     },
     error: (response) => {
@@ -190,6 +151,45 @@ function createPerson() {
   });
 }
 
+function deletePerson(p_userId) {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+
+      $.ajax({
+        url: "/person/delete",
+        method: "DELETE",
+        dataType: "json",
+        data: {
+          userId: p_userId
+        },
+        success: (response) => {
+          if (response.status == "success") {
+            
+            $(`.surface .main .person .personList.contactsArea .eachPerson.contacts[data-id="${p_userId}"]`).remove()
+
+            toastr.success("Message has been deleted.");
+          }
+        },
+        error: (response) => {
+          toastr.error("You got an error!");
+        },
+      });
+    }
+  });
+}
+// contacts (end)
+
+
+
+// chat (begin)
 function showChat() {
   showChatAjaxLoader();
 
@@ -284,8 +284,7 @@ function showChatDetail(p_receiverUserId) {
         let receiverName = response.data.recevierName;
         let receiverEmail = response.data.recevierEmail;
         let date;
-        let message = "",
-          endOfDate;
+        let message = "", endOfDate;
 
         // Chat each message
         for (let i = 0; i < messages.length; i++) {
@@ -389,13 +388,13 @@ function showChatDetail(p_receiverUserId) {
         let scroll_to_bottom = document.getElementById("chatBody");
         scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
 
+        // active each person
+        $('.surface .main .person .personList .eachPerson.active').removeClass('active')
+        $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`).addClass('active')
+
         // set active person info
-        $(
-          `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .content .shortDetail`
-        ).html(message);
-        $(
-          `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .time`
-        ).html(endOfDate);
+        $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .content .shortDetail`).html(message);
+        $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .time`).html(endOfDate);
       }
     },
     error: (response) => {
@@ -404,116 +403,98 @@ function showChatDetail(p_receiverUserId) {
   });
 }
 
-function showProfile() {
-  showChatAjaxLoader();
-
-  var socket = io();
-
-  socket.on("msg", (msg) => {
-    console.log("chat message");
-  });
+function startChat(p_receiverUserId) {
 
   $.ajax({
-    url: "/profile",
-    method: "GET",
-    dataType: "json",
-    success: (response) => {
-      if (response.status == "success") {
-        let profilehtml = "";
-        let profilename = response.data.name;
-        let profileemail = response.data.email;
-
-        // Profile
-        profilehtml += `<div class="profileArea" id="profileField">
-                            <button class="close" onclick="showChat()" title="Close">
-                                <i class="fas fa-times"></i>
-                            </button>
-                            <img src="/images/default-image.png" class="profileImg" alt="">
-                            <div class="nameArea">
-                                <label for="name">Your Name</label>
-                                <input type="text" name="name" id="name" value="${profilename}">
-                                <a href="#">
-                                    <i class="fas fa-check"></i>
-                                </a>
-                            </div>
-                            <div class="nameArea">
-                                <label for="name">Your E-mail</label>
-                                <input type="text" name="email" id="email" value="${profileemail}">
-                                <a href="#">
-                                    <i class="fas fa-check"></i>
-                                </a>
-                            </div>
-                            <div class="buttonArea">
-                                <button class="updateProfile">Apply Changes</button>
-                            </div>
-                        </div>`;
-
-        hideChatAjaxLoader();
-        $("#mainSettingArea >button").removeClass("active");
-        $("#mainSettingArea .profile").addClass("active");
-        $(profilehtml).insertAfter(".profileInfoArea");
-      }
+    url: '/chat/check-exist',
+    method: 'POST',
+    dataType: 'json',
+    data: {
+      receiverUserId: p_receiverUserId
     },
-    error: (response) => {
-      toastr.error("You got an error!");
-    },
-  });
-}
-
-function showContactsToSendMessage() {
-  showChatAjaxLoader();
-
-  $.ajax({
-    url: "/person/list",
-    method: "GET",
-    dataType: "json",
     success: (response) => {
-      if (response.status == "success") {
-        let contactshtml = "";
+      if (response.status == 'success') {
+        if (response.data.checkExist == true) {
+          showChatDetail(p_receiverUserId)
+        }
+        else {
+          let chatdetailhtml = "";
+          let chatmaindetailhtml = "";
+          let receiverName = response.data.recevierName;
+          let receiverEmail = response.data.recevierEmail;
 
-        let contactsdata = response.data.contacts;
-
-        // Search
-        contactshtml += `<div class="searchMainArea">
-                                    <div class="searchArea">
-                                        <input type="text" class="search" placeholder="Search">
-                                        <i class="fas fa-search"></i>
-                                    </div>
-                                </div>`;
-
-        // Contacts
-        contactshtml += `<div class="personList contactsArea">`;
-
-        for (let i = 0; i < contactsdata.length; i++) {
-          contactshtml += `<div class="eachPerson contacts" data-id="${contactsdata[i]._id}">
-                                        <hr class="topLine">
-                                        <img class="profilePhoto" src="/images/default-image.png" alt="">
-                                        <div class="content">
-                                            <div class="name">
-                                                ${contactsdata[i].name}
-                                            </div>
-                                            <div class="actions">
-                                              <button class="startChat" onclick="startChat('${contactsdata[i]._id}')"><i class="fas fa-comment"></i>Message</button>
+          if ($(".surface .main .personDetail").hasClass("mainPage")) {
+            chatmaindetailhtml += `<div class="bodyBackground"></div>
+                                    <div class="header">
+                                        <div class="infoArea">
+                                            <img class="profilePhoto" src="/images/default-image.png" alt="">
+                                            <div class="content">
+                                                <div class="name">
+                                                    ${receiverName}
+                                                </div>
+                                                <div class="shortDetail">
+                                                    ${receiverEmail}
+                                                </div>
                                             </div>
                                         </div>
-                                        <hr class="bottomLine">
+                                        <div class="settings">
+                                            <a class="settingButton" href="#">
+                                                <i class="far fa-info-circle"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="body" id="chatBody">
+                                      ${chatdetailhtml}
+                                    </div>
+                                    <div class="footer">
+                                        <textarea class="text" name="text" placeholder="Type a message" onkeypress="sendMessageKeyPress(event)"></textarea>
+                                        <button class="sendButton" onclick="sendMessage()">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
                                     </div>`;
+
+            $(".surface .main .personDetail").removeClass("mainPage");
+            $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`).addClass("active");
+
+            $(".surface .main .personDetail").html(chatmaindetailhtml);
+          }
+          else {
+            // set receiver name and email in detail side
+            $(".personDetail .header .infoArea .content .name").html(receiverName);
+            $(".personDetail .header .infoArea .content .shortDetail").html(receiverEmail);
+
+            // hide ajax loader
+            hideChatDetailAjaxLoader();
+
+            // set chat detail body
+            $( `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`).addClass("active");
+
+            $(".surface .main .personDetail .body").html(chatdetailhtml);
+          }
+
+          $(".surface .main .personDetail").attr("data-id", p_receiverUserId);
+
+          // scroll bottom on person detail area
+          let scroll_to_bottom = document.getElementById("chatBody");
+          scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
         }
-
-        contactshtml += `</div>`;
-
-        hideChatAjaxLoader();
-        $("#mainSettingArea >button").removeClass("active");
-        $("#mainSettingArea .contacts").addClass("active");
-        $(contactshtml).insertAfter(".profileInfoArea");
+        
+        // active each person
+        $('.surface .main .person .personList.contactsArea .eachPerson.contacts.active').removeClass('active')
+        $(`.surface .main .person .personList.contactsArea .eachPerson.contacts[data-id="${p_receiverUserId}"]`).addClass('active')
       }
     },
     error: (response) => {
-      toastr.error("You got an error!");
-    },
-  });
-}
+      toastr.error('You got an error!')
+    }
+  })
 
+}
+// chat (end)
+
+
+
+// message (begin)
 function sendMessage() {
   let v_message = $(".surface .main .personDetail .footer .text").val();
 
@@ -552,46 +533,12 @@ function sendMessage() {
   }
 }
 
-function deleteMessage(p_messageId) {
-  Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-
-      let v_receiverUserId = $(".surface .main .personDetail").attr("data-id");
-
-      $.ajax({
-        url: "/message/delete",
-        method: "DELETE",
-        dataType: "json",
-        data: {
-          receiverUserId: v_receiverUserId,
-          messageId: p_messageId,
-        },
-        success: (response) => {
-          if (response.status == "success") {
-            
-            var socket = io()
-            let o_message = {
-              messageId: p_messageId
-            }
-            socket.emit('delete chat message', o_message)
-
-            toastr.success("Message has been deleted.");
-          }
-        },
-        error: (response) => {
-          toastr.error("You got an error!");
-        },
-      });
+function sendMessageKeyPress(event){
+  if(event.keyCode == 13){ // enter key code
+    if(!event.shiftKey){  // if it is not shift enter
+        sendMessage()
     }
-  });
+  }
 }
 
 function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messageDate,  p_text) {
@@ -649,12 +596,46 @@ function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messa
   scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
 }
 
-function sendMessageKeyPress(event){
-  if(event.keyCode == 13){ // enter key code
-    if(!event.shiftKey){  // if it is not shift enter
-        sendMessage()
+function deleteMessage(p_messageId) {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+
+      let v_receiverUserId = $(".surface .main .personDetail").attr("data-id");
+
+      $.ajax({
+        url: "/message/delete",
+        method: "DELETE",
+        dataType: "json",
+        data: {
+          receiverUserId: v_receiverUserId,
+          messageId: p_messageId,
+        },
+        success: (response) => {
+          if (response.status == "success") {
+            
+            var socket = io()
+            let o_message = {
+              messageId: p_messageId
+            }
+            socket.emit('delete chat message', o_message)
+
+            toastr.success("Message has been deleted.");
+          }
+        },
+        error: (response) => {
+          toastr.error("You got an error!");
+        },
+      });
     }
-  }
+  });
 }
 
 function deleteMessageFromHtml(p_messageId) {
@@ -681,7 +662,160 @@ function deleteMessageFromHtml(p_messageId) {
   }
 
 }
+// message (end)
 
-function startChat(p_receiverUserID) {
-  showChatDetail(p_receiverUserID)
+
+
+// profile (begin)
+function showProfile() {
+  showChatAjaxLoader();
+
+  var socket = io();
+
+  socket.on("msg", (msg) => {
+    console.log("chat message");
+  });
+
+  $.ajax({
+    url: "/profile",
+    method: "GET",
+    dataType: "json",
+    success: (response) => {
+      if (response.status == "success") {
+        let profilehtml = "";
+        let profilename = response.data.name;
+        let profileemail = response.data.email;
+
+        // Profile
+        profilehtml += `<div class="profileArea" id="profileField">
+                            <button class="close" onclick="showChat()" title="Close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <img src="/images/default-image.png" class="profileImg" alt="">
+                            <div class="formElement">
+                                <label for="name">Your Name</label>
+                                <input type="text" name="name" id="name" value="${profilename}">
+                                <a href="#">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                            </div>
+                            <div class="formElement">
+                                <label for="email">Your E-mail</label>
+                                <input type="text" name="email" id="email" value="${profileemail}">
+                                <a href="#">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                            </div>
+                            <div class="buttonArea">
+                                <button class="updateProfile" onclick="updateProfile()">Apply Changes</button>
+                            </div>
+                        </div>`;
+
+        hideChatAjaxLoader();
+        $("#mainSettingArea >button").removeClass("active");
+        $("#mainSettingArea .profile").addClass("active");
+        $(profilehtml).insertAfter(".profileInfoArea");
+      }
+    },
+    error: (response) => {
+      toastr.error("You got an error!");
+    },
+  });
 }
+
+function updateProfile() {
+  // get data
+  let name = $('.surface .main .person .profileArea .formElement #name').val()
+  let email = $('.surface .main .person .profileArea .formElement #email').val()
+
+  // disable apply changes button
+  $('.surface .main .person .profileArea .buttonArea .updateProfile').prop('disabled', true)
+  $('.surface .main .person .profileArea .formElement #name').prop('disabled', true)
+  $('.surface .main .person .profileArea .formElement #email').prop('disabled', true)
+
+
+  $.ajax({
+    url: '/profile/update',
+    method: 'PUT',
+    dataType: 'json',
+    data: {
+      name,
+      email
+    },
+    success: (response) => {
+      if (response.status == 'success') {
+              
+        // enable apply changes button
+        $('.surface .main .person .profileArea .buttonArea .updateProfile').prop('disabled', false)
+        $('.surface .main .person .profileArea .formElement #name').prop('disabled', false)
+        $('.surface .main .person .profileArea .formElement #email').prop('disabled', false)
+
+        // update html of profile
+        $('.surface .main .person .profileInfoArea .infoArea .content .name').html(name)
+        $('.surface .main .person .profileInfoArea .infoArea .content .shortDetail').html(email)
+
+        toastr.success('Profile has been updated.')
+      }
+    },
+    error: (response) => {
+      toastr.error('You got an error!')
+    }
+  })
+}
+
+function showContactsToSendMessage() {
+  showChatAjaxLoader();
+
+  $.ajax({
+    url: "/person/list",
+    method: "GET",
+    dataType: "json",
+    success: (response) => {
+      if (response.status == "success") {
+        let contactshtml = "";
+
+        let contactsdata = response.data.contacts;
+
+        // Search
+        contactshtml += `<div class="searchMainArea">
+                                    <div class="searchArea">
+                                        <input type="text" class="search" placeholder="Search">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                </div>`;
+
+        // Contacts
+        contactshtml += `<div class="personList contactsArea">`;
+
+        for (let i = 0; i < contactsdata.length; i++) {
+          contactshtml += `<div class="eachPerson contacts" data-id="${contactsdata[i]._id}">
+                                        <hr class="topLine">
+                                        <img class="profilePhoto" src="/images/default-image.png" alt="">
+                                        <div class="content">
+                                            <div class="name">
+                                                ${contactsdata[i].name}
+                                            </div>
+                                            <div class="actions">
+                                              <button class="startChat" onclick="startChat('${contactsdata[i]._id}')"><i class="fas fa-comment"></i>Message</button>
+                                            </div>
+                                        </div>
+                                        <hr class="bottomLine">
+                                    </div>`;
+        }
+
+        contactshtml += `</div>`;
+
+        hideChatAjaxLoader();
+        $("#mainSettingArea >button").removeClass("active");
+        $("#mainSettingArea .contacts").addClass("active");
+        $(contactshtml).insertAfter(".profileInfoArea");
+      }
+    },
+    error: (response) => {
+      toastr.error("You got an error!");
+    },
+  });
+}
+// profile (end)
+
+

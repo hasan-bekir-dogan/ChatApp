@@ -840,9 +840,15 @@ body {
 .surface .main .person .personList .contacts .content .actions .startChat {
   background-image: linear-gradient(to right top, #0EBA59, #137A42);
 }
-.surface .main .person .personList .contacts .content .actions .editPerson {
+.surface .main .person .personList .contacts .content .actions .deletePerson {
   background-color: transparent;
-  color: #62d1f3;
+  color: #FC6180;
+  border: 1px solid #FC6180;
+  border-radius: 5px;
+  padding: 7px;
+}
+.surface .main .person .personList .contacts .content .actions .deletePerson > i {
+  margin: 0;
 }
 .surface .main .person .personList .contacts:hover {
   cursor: default;
@@ -903,7 +909,7 @@ body {
   -o-object-fit: cover;
      object-fit: cover;
 }
-.surface .main .person .profileArea .nameArea {
+.surface .main .person .profileArea .formElement {
   margin-top: 30px;
   display: flex;
   flex-direction: column;
@@ -912,12 +918,12 @@ body {
   width: 100%;
   position: relative;
 }
-.surface .main .person .profileArea .nameArea label {
+.surface .main .person .profileArea .formElement label {
   padding-bottom: 8px;
   padding-left: 7px;
   font-size: 14px;
 }
-.surface .main .person .profileArea .nameArea input {
+.surface .main .person .profileArea .formElement input {
   width: 100%;
   background-color: #F2F2F2;
   border: none;
@@ -925,7 +931,11 @@ body {
   padding: 10px 40px 10px 14px;
   color: #2c343b;
 }
-.surface .main .person .profileArea .nameArea a {
+.surface .main .person .profileArea .formElement input:disabled {
+  background-color: #EAEAEA;
+  cursor: wait;
+}
+.surface .main .person .profileArea .formElement a {
   position: absolute;
   bottom: 14px;
   right: 13px;

@@ -752,10 +752,15 @@ body {
               .startChat{
                 background-image: $logoColor;
               }
-              .editPerson{
+              .deletePerson{
                 background-color: transparent;
-                color:$info;
-                //border: 1px solid $info;
+                color:$delete;
+                border: 1px solid $delete;
+                @include radius(5px);
+                padding:7px;
+                >i{
+                  margin: 0;
+                }
               }
             }
           }
@@ -818,7 +823,7 @@ body {
           @include radius(50%);
           object-fit: cover;
         }
-        .nameArea{
+        .formElement{
           margin-top: 30px;
           display:flex;
           flex-direction: column;
@@ -838,6 +843,10 @@ body {
             border-radius: 4px;
             padding:10px 40px 10px 14px;
             color: $textColor;
+            &:disabled{
+              background-color: $searchBackgroundDisabled;
+              cursor:wait;
+            }
           }
           a{
             position: absolute;

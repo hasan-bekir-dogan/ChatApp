@@ -50,3 +50,20 @@ exports.listPerson = async (req, res) => {
     });
   }
 };
+
+exports.deletePerson = async (req, res) => {
+  try {
+    const user = await User.findById(req.session.userId)
+    await user.phoneBook.pull({_id: req.body.userId})
+    await user.save()
+
+    res.status(200).json({
+      status: 'success'
+    })
+  } catch (error) {
+    res.status(400).json({
+      error,
+      status: 'fail'
+    })
+  }
+}
