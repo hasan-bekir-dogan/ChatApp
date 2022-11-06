@@ -41,11 +41,11 @@ exports.sendMessage = async (req, res) => {
       }
     });
 
-    /*req.app.get('io').on('connection', (socket) => {
-      socket.emit('chat-message', req.body.text)
-    })*/
-
     res.status(201).json({
+      data: {
+        messageId: message._id,
+        messageDate: message.createdAt
+      },
       status: "success",
     });
   } catch (error) {

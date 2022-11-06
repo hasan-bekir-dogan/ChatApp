@@ -15,12 +15,3 @@ window.onclick = function(event) {
 }
 // my profile settings button (end)
 
-/*
-function f_workedsocket(){
-    console.log('created')
-}
-
-
-var socket = io();
-
-socket.on('sentmsg', f_workedsocket())*/
