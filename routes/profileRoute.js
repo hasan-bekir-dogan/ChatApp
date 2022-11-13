@@ -7,6 +7,6 @@ const User = require("../models/User");
 const router = express.Router();
 
 router.route("/").get(profileController.getProfile);
-router.route('/update').put(profileController.updateProfile)
+router.route('/update').put(profileController.updateProfile);
 
 module.exports = router;

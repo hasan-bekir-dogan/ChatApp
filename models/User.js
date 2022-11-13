@@ -17,12 +17,20 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    default: '/images/default-image.png'
+  },
   phoneBook: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
   ],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 UserSchema.pre("save", function (next) {

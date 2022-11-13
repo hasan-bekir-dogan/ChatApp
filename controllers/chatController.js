@@ -63,6 +63,7 @@ exports.getChat = async (req, res) => {
 
       chatPlain.push({
         userId: receiveruserid,
+        image: receiver.image,
         type: messages[messages.length - 1].userType,
         name: receiver.name,
         date: messages[messages.length - 1].createdAt,
@@ -93,6 +94,7 @@ exports.getChatDetail = async (req, res) => {
     // receiver name and email
     let recevierName = receiver.name;
     let recevierEmail = receiver.email;
+    let recevierImage = receiver.image;
 
     let senderUser = 1;
     let chat = await Chat.findOne({
@@ -145,7 +147,8 @@ exports.getChatDetail = async (req, res) => {
       data: {
         messages,
         recevierName,
-        recevierEmail
+        recevierEmail,
+        recevierImage
       },
       status: "success",
     });
@@ -168,6 +171,7 @@ exports.checkChatExist = async (req, res) => {
     // receiver name and email
     let recevierName = receiver.name;
     let recevierEmail = receiver.email;
+    let recevierImage = receiver.image;
 
     const chat = await Chat.findOne({
       $or: [
@@ -191,7 +195,8 @@ exports.checkChatExist = async (req, res) => {
       data: {
         checkExist,
         recevierName,
-        recevierEmail
+        recevierEmail,
+        recevierImage
       },
       status: 'success'
     })

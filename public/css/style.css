@@ -727,7 +727,7 @@ body {
   justify-content: space-between;
   align-content: start;
   align-items: start;
-  width: 283.52px;
+  width: calc(100% - 60px - 107px);
 }
 .surface .main .person .personList .eachPerson .content .name {
   font-size: 16px;
@@ -755,6 +755,7 @@ body {
   line-height: 1.4;
   padding: 7px 0;
   color: #ADADAD;
+  width: 107px;
 }
 .surface .main .person .personList .eachPerson:first-child .topLine {
   display: none;
@@ -870,7 +871,10 @@ body {
   background: #E4E8E9;
   box-shadow: none;
 }
-.surface .main .person .profileArea {
+.surface .main .person #updateProfile {
+  width: 100%;
+}
+.surface .main .person #updateProfile .profileArea {
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -880,7 +884,7 @@ body {
   width: 100%;
   position: relative;
 }
-.surface .main .person .profileArea .close {
+.surface .main .person #updateProfile .profileArea .close {
   color: #2c343b;
   font-size: 20px;
   position: absolute;
@@ -898,32 +902,68 @@ body {
   background-color: transparent;
   transition: 0.2s;
 }
-.surface .main .person .profileArea .close:hover {
+.surface .main .person #updateProfile .profileArea .close:hover {
   background-color: #E4E8E9;
   transition: 0.2s;
 }
-.surface .main .person .profileArea .profileImg {
+.surface .main .person #updateProfile .profileArea .uploadImageArea {
   width: 250px;
   height: 250px;
+  position: relative;
+}
+.surface .main .person #updateProfile .profileArea .uploadImageArea .profileImg {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   -o-object-fit: cover;
      object-fit: cover;
 }
-.surface .main .person .profileArea .formElement {
-  margin-top: 30px;
+.surface .main .person #updateProfile .profileArea .uploadImageArea .uploadPhotoButton {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  z-index: 100;
+  background-color: #E4E8E9;
+  opacity: 0;
+  transition: 0.4s;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  font-size: 40px;
+}
+.surface .main .person #updateProfile .profileArea .uploadImageArea .uploadPhotoButton > i {
+  opacity: 0.9;
+}
+.surface .main .person #updateProfile .profileArea .uploadImageArea .uploadPhotoButton:hover {
+  opacity: 0.4;
+}
+.surface .main .person #updateProfile .profileArea .uploadImageArea #profile-photo {
+  display: none;
+}
+.surface .main .person #updateProfile .profileArea .headerArea {
+  margin-top: 1rem;
+}
+.surface .main .person #updateProfile .profileArea .formElement {
   display: flex;
   flex-direction: column;
   align-items: start;
   align-content: start;
   width: 100%;
   position: relative;
+  margin-top: 30px;
 }
-.surface .main .person .profileArea .formElement label {
+.surface .main .person #updateProfile .profileArea .formElement label {
   padding-bottom: 8px;
   padding-left: 7px;
   font-size: 14px;
 }
-.surface .main .person .profileArea .formElement input {
+.surface .main .person #updateProfile .profileArea .formElement input {
   width: 100%;
   background-color: #F2F2F2;
   border: none;
@@ -931,11 +971,11 @@ body {
   padding: 10px 40px 10px 14px;
   color: #2c343b;
 }
-.surface .main .person .profileArea .formElement input:disabled {
+.surface .main .person #updateProfile .profileArea .formElement input:disabled {
   background-color: #EAEAEA;
   cursor: wait;
 }
-.surface .main .person .profileArea .formElement a {
+.surface .main .person #updateProfile .profileArea .formElement a {
   position: absolute;
   bottom: 14px;
   right: 13px;
@@ -943,7 +983,7 @@ body {
   display: block;
   color: #29E907;
 }
-.surface .main .person .profileArea .buttonArea {
+.surface .main .person #updateProfile .profileArea .buttonArea {
   display: flex;
   flex-direction: row;
   justify-content: end;
@@ -952,7 +992,7 @@ body {
   margin-top: 30px;
   width: 100%;
 }
-.surface .main .person .profileArea .buttonArea .updateProfile {
+.surface .main .person #updateProfile .profileArea .buttonArea .updateProfile {
   background-image: linear-gradient(to right top, #0EBA59, #137A42);
   text-align: center;
   padding: 8px 15px;
@@ -964,13 +1004,143 @@ body {
   cursor: pointer;
   color: white;
 }
-.surface .main .person .profileArea .buttonArea .updateProfile:disabled {
+.surface .main .person #updateProfile .profileArea .buttonArea .updateProfile:disabled {
   background-image: linear-gradient(to right top, #10D162, #17934F);
   cursor: wait;
 }
-.surface .main .person .createPersonArea .profileImg {
-  width: 150px;
-  height: 150px;
+.surface .main .person .createPersonArea {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  align-content: center;
+  padding: 40px 14px 14px 14px;
+  width: 100%;
+  position: relative;
+}
+.surface .main .person .createPersonArea .close {
+  color: #2c343b;
+  font-size: 20px;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  transition: 0.2s;
+}
+.surface .main .person .createPersonArea .close:hover {
+  background-color: #E4E8E9;
+  transition: 0.2s;
+}
+.surface .main .person .createPersonArea .uploadImageArea {
+  width: 250px;
+  height: 250px;
+  position: relative;
+}
+.surface .main .person .createPersonArea .uploadImageArea .profileImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.surface .main .person .createPersonArea .uploadImageArea .uploadPhotoButton {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  z-index: 100;
+  background-color: #E4E8E9;
+  opacity: 0;
+  transition: 0.4s;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  font-size: 40px;
+}
+.surface .main .person .createPersonArea .uploadImageArea .uploadPhotoButton > i {
+  opacity: 0.9;
+}
+.surface .main .person .createPersonArea .uploadImageArea .uploadPhotoButton:hover {
+  opacity: 0.4;
+}
+.surface .main .person .createPersonArea .uploadImageArea #profile-photo {
+  display: none;
+}
+.surface .main .person .createPersonArea .headerArea {
+  margin-top: 1rem;
+}
+.surface .main .person .createPersonArea .formElement {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  align-content: start;
+  width: 100%;
+  position: relative;
+  margin-top: 30px;
+}
+.surface .main .person .createPersonArea .formElement label {
+  padding-bottom: 8px;
+  padding-left: 7px;
+  font-size: 14px;
+}
+.surface .main .person .createPersonArea .formElement input {
+  width: 100%;
+  background-color: #F2F2F2;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 40px 10px 14px;
+  color: #2c343b;
+}
+.surface .main .person .createPersonArea .formElement input:disabled {
+  background-color: #EAEAEA;
+  cursor: wait;
+}
+.surface .main .person .createPersonArea .formElement a {
+  position: absolute;
+  bottom: 14px;
+  right: 13px;
+  border-radius: 50%;
+  display: block;
+  color: #29E907;
+}
+.surface .main .person .createPersonArea .buttonArea {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+  align-content: center;
+  margin-top: 30px;
+  width: 100%;
+}
+.surface .main .person .createPersonArea .buttonArea .updateProfile {
+  background-image: linear-gradient(to right top, #0EBA59, #137A42);
+  text-align: center;
+  padding: 8px 15px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 17px;
+  cursor: pointer;
+  color: white;
+}
+.surface .main .person .createPersonArea .buttonArea .updateProfile:disabled {
+  background-image: linear-gradient(to right top, #10D162, #17934F);
+  cursor: wait;
 }
 .surface .main .person .createPersonArea button {
   text-align: center;
@@ -1622,4 +1792,36 @@ body {
   justify-content: center;
   align-items: center;
   align-content: center;
+}
+
+/* The alert message box */
+.alertError {
+  position: relative;
+  padding-right: 2.5rem;
+  padding-top: 1rem;
+  width: 100%;
+}
+.alertError .closebtnErrorMsg {
+  font-weight: bold;
+  font-size: 15px;
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  top: 1rem;
+  right: 0.6rem;
+  cursor: pointer;
+}
+.alertError .closebtnErrorMsg:hover {
+  color: black;
+}
+.alertError .messageArea li {
+  margin-bottom: 0.5rem;
+}
+.alertError .messageArea li:last-child {
+  margin-bottom: 0;
 }/*# sourceMappingURL=style.css.map */
