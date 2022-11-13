@@ -8,6 +8,7 @@ exports.getIndexPage = async (req, res) => {
   res.status(200).render("index", {
     myName: user.name,
     myEmail: user.email,
+    myProfilePhoto: user.image
   });
 };
 

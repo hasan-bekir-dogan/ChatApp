@@ -1,4 +1,5 @@
 const express = require("express");
+const fileUpload = require("express-fileupload");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
@@ -51,6 +52,7 @@ global.userAuth = null;
 // Middlewares
 app.use(express.static("public"));
 app.use(express.json()); //for parsing application/json
+app.use(fileUpload());
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(
   session({

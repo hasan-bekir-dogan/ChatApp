@@ -637,7 +637,8 @@ body {
             justify-content: space-between;
             align-content: start;
             align-items: start;
-            width: 283.52px;
+            //width: 283.52px;
+            width: calc(100% - 60px - 107px);
             .name{
               font-size: 16px;
               line-height: 18px;
@@ -665,6 +666,7 @@ body {
             line-height: 1.4;
             padding: 7px 0;
             color: $time;
+            width:107px;
           }
           &:first-child{
             .topLine{
@@ -786,7 +788,143 @@ body {
           box-shadow: none; 
         }
       }
-      .profileArea{
+      #updateProfile{
+        width: 100%;
+        .profileArea{
+          display:flex;
+          flex-direction: column;
+          justify-content: start;
+          align-items: center;
+          align-content: center;
+          padding: 40px 14px 14px 14px;
+          width:100%;
+          position: relative;
+          .close{
+            color: $textColor;
+            font-size: 20px;
+            position:absolute;
+            top:14px;
+            right:14px;
+            @include radius(50%);
+            border: none;
+            display:flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            width: 30px;
+            height: 30px;
+            background-color: transparent;
+            transition: 0.2s;
+            &:hover{
+              background-color: $headerBackground;
+              transition: 0.2s;
+            }
+          }
+          .uploadImageArea{
+            width: 250px;
+            height: 250px;
+            position: relative;
+            .profileImg{
+              width: 100%;
+              height: 100%;
+              @include radius(50%);
+              object-fit: cover;
+            }
+            .uploadPhotoButton{
+              width: 100%;
+              height: 100%;
+              @include radius(50%);
+              position: absolute;
+              top:0;
+              left:0;
+              cursor: pointer;
+              z-index: 100;
+              background-color: $headerBackground;
+              opacity: 0;
+              transition: 0.4s;
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+              align-content: center;
+              font-size: 40px;
+              >i{
+                opacity: 0.9;
+              }
+              &:hover{
+                opacity: 0.4;
+              }
+            }
+            #profile-photo{
+              display:none;
+            }
+          }
+          .headerArea{
+            margin-top: 1rem;
+          }
+          .formElement{
+            display:flex;
+            flex-direction: column;
+            align-items: start;
+            align-content: start;
+            width:100%;
+            position: relative;
+            margin-top: 30px;
+            label{
+              padding-bottom: 8px;
+              padding-left:7px;
+              font-size: 14px;
+            }
+            input{
+              width:100%;
+              background-color: $searchBackground;
+              border:none;
+              border-radius: 4px;
+              padding:10px 40px 10px 14px;
+              color: $textColor;
+              &:disabled{
+                background-color: $searchBackgroundDisabled;
+                cursor:wait;
+              }
+            }
+            a{
+              position: absolute;
+              bottom: 14px;
+              right: 13px;
+              @include radius(50%);
+              display:block;
+              color: $approveColor;
+            }
+          }
+          .buttonArea{
+            display:flex;
+            flex-direction: row;
+            justify-content: end;
+            align-items: center;
+            align-content: center;
+            margin-top: 30px;
+            width:100%;
+            .updateProfile{
+              background-image: $logoColor;
+              text-align: center;
+              padding: 8px 15px;
+              border: none;
+              outline: none;
+              border-radius: 5px;
+              font-size: 14px;
+              line-height: 17px;
+              cursor: pointer;
+              color: white;
+              &:disabled{
+                background-image: $logoColorDisabled;
+                cursor:wait;
+              }
+            }
+          }
+        }
+      }
+      .createPersonArea{
         display:flex;
         flex-direction: column;
         justify-content: start;
@@ -817,20 +955,56 @@ body {
             transition: 0.2s;
           }
         }
-        .profileImg{
-          width:250px;
+        .uploadImageArea{
+          width: 250px;
           height: 250px;
-          @include radius(50%);
-          object-fit: cover;
+          position: relative;
+          .profileImg{
+            width: 100%;
+            height: 100%;
+            @include radius(50%);
+            object-fit: cover;
+          }
+          .uploadPhotoButton{
+            width: 100%;
+            height: 100%;
+            @include radius(50%);
+            position: absolute;
+            top:0;
+            left:0;
+            cursor: pointer;
+            z-index: 100;
+            background-color: $headerBackground;
+            opacity: 0;
+            transition: 0.4s;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            font-size: 40px;
+            >i{
+              opacity: 0.9;
+            }
+            &:hover{
+              opacity: 0.4;
+            }
+          }
+          #profile-photo{
+            display:none;
+          }
+        }
+        .headerArea{
+          margin-top: 1rem;
         }
         .formElement{
-          margin-top: 30px;
           display:flex;
           flex-direction: column;
           align-items: start;
           align-content: start;
           width:100%;
           position: relative;
+          margin-top: 30px;
           label{
             padding-bottom: 8px;
             padding-left:7px;
@@ -882,12 +1056,9 @@ body {
             }
           }
         }
-      }
-      .createPersonArea{
-        .profileImg{
-          width: 150px;
-          height:150px;
-        }
+
+
+
         button{
           text-align: center;
           padding: 8px 15px;
@@ -1551,3 +1722,41 @@ body {
   align-items: center;
   align-content: center;
 }
+
+
+
+// alert error message
+/* The alert message box */
+.alertError {
+  position:relative;
+  padding-right: 2.5rem;
+  padding-top: 1rem;
+  width: 100%;
+  .closebtnErrorMsg {
+    font-weight: bold;
+    font-size: 15px;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    top: 1rem;
+    right: 0.6rem;
+    cursor: pointer;
+    &:hover {
+      color: black;
+    }
+  }
+  .messageArea{
+    li{
+      margin-bottom: 0.5rem;
+      &:last-child{
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+

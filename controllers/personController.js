@@ -3,6 +3,28 @@ const User = require("../models/User");
 
 exports.createPerson = async (req, res) => {
   try {
+    // validation (begin)
+    let errormessage = []
+    let checkVal = true
+
+    if (req.body.email === '') {
+      errormessage.push({
+        message: 'E-mail must have some value.'
+      })
+      checkVal = false
+    }
+
+    if (checkVal === false) {
+      res.status(422).json({
+        errorMessages: errormessage,
+        status: 'validation'
+      })
+
+      return
+    }
+    // validation (end)
+
+
     const person = await User.findOne({
       email: req.body.email,
     }).then(async (person) => {
