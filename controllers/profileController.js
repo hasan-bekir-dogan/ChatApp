@@ -51,7 +51,6 @@ exports.updateProfile = async (req, res) => {
     }
     // validation (end)
 
-
     // upload image (begin)
     const uploadDir = "public/uploads";
 
@@ -71,30 +70,36 @@ exports.updateProfile = async (req, res) => {
     let fulldate = year + month + day + '-' + hour + minute + second
     // get current date (end)
 
-    let uploadedImage = req.files.image;
-    uploadedImage.name = req.session.userId + '_' + fulldate + '.png'
-    let uploadPath = __dirname + "/../public/uploads/" + uploadedImage.name;
+    let profilePhoto = '';
+    if (req.files != null) {
+      let uploadedImage = req.files.image;
+      uploadedImage.name = req.session.userId + '_' + fulldate + '.png'
+      profilePhoto = "/../uploads/" + uploadedImage.name
+      let uploadPath = __dirname + "/../public/uploads/" + uploadedImage.name;
 
-    uploadedImage.mv(uploadPath);
+      uploadedImage.mv(uploadPath);
+    }
     // upload image (end)
-
 
     const user = await User.findById(req.session.userId)
     user.name = req.body.name
     user.email = req.body.email
 
     // delete image
-    let deleteImagePath = __dirname + "/../public" + user.image.slice(3)
-    if (fs.existsSync(deleteImagePath)) {
-      fs.unlinkSync(deleteImagePath);
+    if (req.files != null) {
+      let deleteImagePath = __dirname + "/../public" + user.image.slice(3)
+      if (fs.existsSync(deleteImagePath)) {
+        fs.unlinkSync(deleteImagePath);
+      }
+      user.image = profilePhoto
     }
 
-    user.image = "/../uploads/" + uploadedImage.name
     user.save()
+    
 
     res.status(200).json({
       data: {
-        profileImage: "/../uploads/" + uploadedImage.name
+        profileImage: profilePhoto
       },
       status: 'success'
     })

@@ -422,7 +422,7 @@ body {
       //@include bottom-left-radius($mainRadius);
       position:relative;
       z-index:150;
-      width: 30.5%;
+      width: 405px; //25.5%;
       .profileInfoArea{
         display: flex;
         flex-direction: row;
@@ -645,6 +645,9 @@ body {
               height: 18px;
               overflow:hidden;
               font-weight: bold;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              width:100%;
             }
             .shortDetail{
               font-size: 14px;
@@ -652,6 +655,9 @@ body {
               line-height: 17px;
               overflow: hidden;
               color: $shortText;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              width:100%;
             }
           }
           .time{
@@ -1103,7 +1109,7 @@ body {
       z-index: 5;
       @include top-right-radius($mainRadius);
       @include bottom-right-radius($mainRadius);
-      width: calc(79.5% - 55px);
+      width: calc(100% - 55px - 405px);
       .bodybackground{
         opacity: 0.5;
         position: absolute;

@@ -541,8 +541,6 @@ function sendMessage() {
           };
           socket.emit("add chat message", o_message);
 
-
-
           $(".surface .main .personDetail .footer .text").val("");
         }
       },
@@ -561,25 +559,15 @@ function sendMessageKeyPress(event){
   }
 }
 
-function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messageDate,  p_text) {
+function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messageDate, p_text) {
   v_currentUserId = $('.surface .main .person .profileInfoArea').attr('data-id');
 
-  if(v_currentUserId == p_receiverUserId || v_currentUserId == p_senderUserId){
+  // sender user (begin)
+  if(v_currentUserId == p_senderUserId){  // sender user
     let messagehtml = '';
-    let userType = '';
     let lastMessage = '';
 
-    messagehtml += `<div class="eachMessage `;
-
-    if (v_currentUserId == p_senderUserId){
-      messagehtml += "me";
-      userType = 'Me: ';
-    }
-    else if(v_currentUserId == p_receiverUserId){
-      messagehtml += "you";
-    }
-
-    messagehtml += `" data-id="${p_messageId}">
+    messagehtml += `<div class="eachMessage me" data-id="${p_messageId}">
                     <div class="subRegion">
                         <div class="messageArea">
                             <div class="message">
@@ -606,17 +594,65 @@ function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messa
                 </div>`;
 
     // update chat detail
-    $(messagehtml).insertAfter('.surface .main .personDetail .body .eachMessage:last-child')
+    $(messagehtml).insertAfter(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body .eachMessage:last-child`)
 
     // update chat
-    lastMessage = userType + p_text
-    $(`.surface .main .person .personList .eachPerson.active .content .shortDetail`).html(lastMessage)
-    $(`.surface .main .person .personList .eachPerson.active .time`).html(date)
+    lastMessage = 'Me: ' + p_text
+    $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .content .shortDetail`).html(lastMessage)
+    $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .time`).html(date)
 
     // scroll bottom on person detail area
-    let scroll_to_bottom = document.getElementById("chatBody");
-    scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
+    let bodHeight = $(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`).prop('scrollHeight')
+    $(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`).scrollTop(bodHeight)
   }
+  // sender user (end)
+
+  /*********************************************************************************/
+
+  // receiver user (begin)
+  if(v_currentUserId == p_receiverUserId){
+    let messagehtml = '';
+    let lastMessage = '';
+
+    messagehtml += `<div class="eachMessage you" data-id="${p_messageId}">
+                    <div class="subRegion">
+                        <div class="messageArea">
+                            <div class="message">
+                                ${p_text}
+                            </div>
+                            <div class="time">`;
+
+    date = new Date(p_messageDate).toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    });
+
+    messagehtml += String(date);
+
+    messagehtml += `     </div>
+                            <button class="deleteMessage" onclick="deleteMessage('${p_messageId}')">
+                              <i class="far fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+
+    // update chat detail
+    $(messagehtml).insertAfter(`.surface .main .personDetail[data-id="${p_senderUserId}"] .body .eachMessage:last-child`)
+
+    // update chat
+    lastMessage = p_text
+    $(`.surface .main .person .personList .eachPerson[data-id="${p_senderUserId}"] .content .shortDetail`).html(lastMessage)
+    $(`.surface .main .person .personList .eachPerson[data-id="${p_senderUserId}"] .time`).html(date)
+
+    // scroll bottom on person detail area
+    let bodHeight = $(`.surface .main .personDetail[data-id="${p_senderUserId}"] .body`).prop('scrollHeight')
+    $(`.surface .main .personDetail[data-id="${p_senderUserId}"] .body`).scrollTop(bodHeight)
+  }
+  // receiver user (end)
 }
 
 function deleteMessage(p_messageId) {
@@ -632,6 +668,7 @@ function deleteMessage(p_messageId) {
     if (result.isConfirmed) {
 
       let v_receiverUserId = $(".surface .main .personDetail").attr("data-id");
+      let v_senderUserId = $(".surface .main .person .profileInfoArea").attr("data-id");
 
       $.ajax({
         url: "/message/delete",
@@ -646,6 +683,8 @@ function deleteMessage(p_messageId) {
             
             var socket = io()
             let o_message = {
+              senderUserId: v_senderUserId,
+              receiverUserId: v_receiverUserId,
               messageId: p_messageId
             }
             socket.emit('delete chat message', o_message)
@@ -661,7 +700,7 @@ function deleteMessage(p_messageId) {
   });
 }
 
-function deleteMessageFromHtml(p_messageId) {
+function deleteMessageFromHtml(p_senderUserId, p_receiverUserId, p_messageId) {
 
   if ($($(`.surface .main .personDetail .body .eachMessage:last-child`).attr('data-id') == p_messageId)) { // then it is last message. So, we need to update chat
     // delete message
@@ -676,8 +715,19 @@ function deleteMessageFromHtml(p_messageId) {
       userType = 'Me: '
     }
 
-    $('.surface .main .person .personList .eachPerson.active .content .shortDetail').html(userType + text)
-    $('.surface .main .person .personList .eachPerson.active .time').html(date)
+    let v_currentUserId = $('.surface .main .person .profileInfoArea').attr('data-id');
+    let v_userId;
+
+   
+    if(v_currentUserId == p_senderUserId){  // sender user
+      v_userId = p_receiverUserId;
+    }
+    if(v_currentUserId == p_receiverUserId){  // receiver user
+      v_userId = p_senderUserId;
+    }
+
+    $(`.surface .main .person .personList .eachPerson[data-id="${v_userId}"] .content .shortDetail`).html(userType + text)
+    $(`.surface .main .person .personList .eachPerson[data-id="${v_userId}"] .time`).html(date)
   }
   else {
     // delete message
