@@ -8,5 +8,6 @@ const router = express.Router();
 router.route("/").get(chatController.getChat);
 router.route("/detail").post(chatController.getChatDetail);
 router.route("/check-exist").post(chatController.checkChatExist);
+router.route("/search").post(chatController.searchInChat);
 
 module.exports = router;
