@@ -1,5 +1,6 @@
 const Message = require("../models/Message");
 const Chat = require("../models/Chat");
+const User = require('../models/User')
 
 
 exports.sendMessage = async (req, res) => {
@@ -41,10 +42,14 @@ exports.sendMessage = async (req, res) => {
       }
     });
 
+    const receiverUser = await User.findById(req.body.receiverUserId);
+
     res.status(201).json({
       data: {
         messageId: message._id,
-        messageDate: message.createdAt
+        messageDate: message.createdAt,
+        receiverUserName: receiverUser.name,
+        receiverUserImage: receiverUser.image
       },
       status: "success",
     });
@@ -61,6 +66,7 @@ exports.deleteMessage = async (req, res) => {
     const messageId = req.body.messageId;
     const receiverUserId = req.body.receiverUserId;
     const senderUserId = req.session.userId;
+    let checkChatEmpty = false;
 
     const chat = await Chat.findOne({
       $or: [
@@ -80,9 +86,21 @@ exports.deleteMessage = async (req, res) => {
 
     await Message.findByIdAndRemove({_id: messageId})
 
+    // delete chat if there is no message (begin)
+    let checkChat = await Chat.findById(chat._id)
+    .populate('user1MessageId')
+    .populate('user2MessageId');
+
+    if(checkChat.user1MessageId[0] == null && checkChat.user2MessageId[0] == null) {
+      await Chat.findByIdAndRemove({_id: chat._id})
+      checkChatEmpty = true;
+    }
+    // delete chat if there is no message (end)
+
+
     res.status(200).json({
-      status: "success",
-      chat,
+      checkChatEmpty,
+      status: "success"
     });
   } catch (error) {
     res.status(400).json({

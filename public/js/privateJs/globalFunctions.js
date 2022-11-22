@@ -228,7 +228,7 @@ function showChat() {
         // Search Header
         chathtml = `<div class="searchMainArea">
                             <div class="searchArea">
-                                <input type="text" class="search" placeholder="Search">
+                                <input type="text" class="search" placeholder="Search" id="searchInChat">
                                 <i class="fas fa-search"></i>
                             </div>
                             <button class="newChatButton" onclick="showContactsToSendMessage()" title="Type to a person">
@@ -280,6 +280,8 @@ function showChat() {
         $("#mainSettingArea >button").removeClass("active");
         $("#mainSettingArea .chat").addClass("active");
         $(chathtml).insertAfter(".profileInfoArea");
+
+        searchInChat()
       }
     },
     error: (response) => {
@@ -508,6 +510,71 @@ function startChat(p_receiverUserId) {
   })
 
 }
+
+function searchInChat() {
+  $('.surface .main .person .searchArea #searchInChat').on('input', function () {
+    let searchtext = $('.surface .main .person .searchArea #searchInChat').val();
+
+    $.ajax({
+      url: '/chat/search',
+      method: 'POST',
+      datatype: 'json',
+      data: {
+        searchtext
+      },
+      success: (response) => {
+        if (response.status == 'success') {
+          let chathtml = "";
+          let chat = response.data.chat;
+          let date;
+
+          // Main chat Each Person
+          for (let i = 0; i < chat.length; i++) {
+            chathtml += `<div class="eachPerson" onclick="showChatDetail('${chat[i].userId}')" data-id="${chat[i].userId}">
+                              <hr class="topLine">
+                              <img class="profilePhoto" src="${chat[i].image}" alt="">
+                              <div class="content">
+                                  <div class="name">
+                                      ${chat[i].name}
+                                  </div>
+                                  <div class="shortDetail">`;
+
+            if (chat[i].type == "sender") {
+              chathtml += "Me: ";
+            }
+
+            chathtml += `             ${chat[i].lastMessage}
+                                  </div>
+                              </div>
+                              <div class="time">`;
+
+            date = new Date(chat[i].date).toLocaleDateString("en-GB", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            });
+
+            chathtml += String(date);
+
+            chathtml += `     </div>
+                              <hr class="bottomLine">
+                          </div>`;
+          }
+
+          $("#mainSettingArea >button").removeClass("active");
+          $("#mainSettingArea .chat").addClass("active");
+          $(".surface .main .person .personList").html(chathtml);
+
+        }
+      },
+      error: (Response) => {
+        toastr.error('You got an error!')
+      }
+    })
+  })
+}
 // chat (end)
 
 
@@ -538,6 +605,8 @@ function sendMessage() {
             messageId: response.data.messageId,
             messageDate: response.data.messageDate,
             text: v_message,
+            receiverUserName: response.data.receiverUserName,
+            receiverUserImage: response.data.receiverUserImage
           };
           socket.emit("add chat message", o_message);
 
@@ -559,7 +628,7 @@ function sendMessageKeyPress(event){
   }
 }
 
-function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messageDate, p_text) {
+function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messageDate, p_text, p_receiverUserName, p_receiverUserImage) {
   v_currentUserId = $('.surface .main .person .profileInfoArea').attr('data-id');
 
   // sender user (begin)
@@ -594,7 +663,11 @@ function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messa
                 </div>`;
 
     // update chat detail
-    $(messagehtml).insertAfter(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body .eachMessage:last-child`)
+    if($(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`).html().trim() != '')
+      $(messagehtml).insertAfter(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body .eachMessage:last-child`)
+    else{
+      $(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`).html(messagehtml)
+    }
 
     // update chat
     lastMessage = 'Me: ' + p_text
@@ -613,6 +686,7 @@ function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messa
   if(v_currentUserId == p_receiverUserId){
     let messagehtml = '';
     let lastMessage = '';
+    let v_receiverUserId = p_senderUserId;
 
     messagehtml += `<div class="eachMessage you" data-id="${p_messageId}">
                     <div class="subRegion">
@@ -640,17 +714,53 @@ function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messa
                     </div>
                 </div>`;
 
+
+    // add chat if it is shown in html (begin)
+    if($('.surface .main .person .personList .eachPerson').attr('data-id') != v_receiverUserId || $('.surface .main .person .personList').html() == '') {
+      date = new Date(p_messageDate).toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      });
+
+      let chathtml = `<div class="eachPerson" onclick="showChatDetail('${v_receiverUserId}')" data-id="${v_receiverUserId}">
+                      <hr class="topLine">
+                      <img class="profilePhoto" src="${p_receiverUserImage}" alt="">
+                      <div class="content">
+                          <div class="name">
+                              ${p_receiverUserName}
+                          </div>
+                          <div class="shortDetail">
+                            ${p_text}
+                          </div>
+                      </div>
+                      <div class="time">
+                        ${String(date)}
+                      </div>
+                      <hr class="bottomLine">
+                  </div>`;
+
+      if ($('.surface .main .person .personList').html() == '')
+        $(`.surface .main .person .personList`).html(chathtml)
+      else if ($('.surface .main .person .personList .eachPerson').attr('data-id') != v_receiverUserId)
+        $(chathtml).insertAfter(`.surface .main .person .personList .eachPerson:last-child`)
+    }
+    // add chat if it is shown in html (end)
+
+
     // update chat detail
-    $(messagehtml).insertAfter(`.surface .main .personDetail[data-id="${p_senderUserId}"] .body .eachMessage:last-child`)
+    $(messagehtml).insertAfter(`.surface .main .personDetail[data-id="${v_receiverUserId}"] .body .eachMessage:last-child`)
 
     // update chat
     lastMessage = p_text
-    $(`.surface .main .person .personList .eachPerson[data-id="${p_senderUserId}"] .content .shortDetail`).html(lastMessage)
-    $(`.surface .main .person .personList .eachPerson[data-id="${p_senderUserId}"] .time`).html(date)
+    $(`.surface .main .person .personList .eachPerson[data-id="${v_receiverUserId}"] .content .shortDetail`).html(lastMessage)
+    $(`.surface .main .person .personList .eachPerson[data-id="${v_receiverUserId}"] .time`).html(date)
 
     // scroll bottom on person detail area
-    let bodHeight = $(`.surface .main .personDetail[data-id="${p_senderUserId}"] .body`).prop('scrollHeight')
-    $(`.surface .main .personDetail[data-id="${p_senderUserId}"] .body`).scrollTop(bodHeight)
+    let bodHeight = $(`.surface .main .personDetail[data-id="${v_receiverUserId}"] .body`).prop('scrollHeight')
+    $(`.surface .main .personDetail[data-id="${v_receiverUserId}"] .body`).scrollTop(bodHeight)
   }
   // receiver user (end)
 }
@@ -688,6 +798,21 @@ function deleteMessage(p_messageId) {
               messageId: p_messageId
             }
             socket.emit('delete chat message', o_message)
+
+            if (response.checkChatEmpty == true) {
+              $(`.surface .main .person .personList .eachPerson[data-id="${v_receiverUserId}"]`).remove()
+
+              let mainPage = `<div class="mainPageDetail">
+                                  <div class="logo">
+                                      <i class="fas fa-users"></i> <i class="fas fa-comments-alt"></i>
+                                  </div>
+                                  <div class="title">ChatApp</div>
+                                  <div class="text">Send and receive messages using email address.</div>
+                              </div>`;
+              
+              $('.surface .main .personDetail').addClass('mainPage')
+              $('.surface .main .personDetail').html(mainPage)
+            }
 
             toastr.success("Message has been deleted.");
           }
