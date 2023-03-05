@@ -23,9 +23,11 @@ This project is a live chat program. Users can message each other. User can crea
 ##
 
 **You must connect to your database. For this, you can change variable that called URI in app.js file.** 
+
     const URI = "mongodb://localhost/chatapp";
 
 **You must run this code.** 
+
     npm start
 
 ##
