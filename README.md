@@ -34,9 +34,6 @@ This project is a live chat program. Users can message each other. User can crea
     npm start
 ##
 
-
-##
-
 **Techonologies that used in the project.**
 
 - Object Oriented Programming
