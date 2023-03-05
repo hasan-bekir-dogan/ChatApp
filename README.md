@@ -26,12 +26,13 @@ This project is a live chat program. Users can message each other. User can crea
 
 ##
     const URI = "mongodb://localhost/chatapp";
-##
 
 **You must run this code.** 
 
-##
     npm start
+    
+##
+You can reach to application at [https://livechat-app.herokuapp.com/](https://livechat-app.herokuapp.com/)
 ##
 
 **Techonologies that used in the project.**
