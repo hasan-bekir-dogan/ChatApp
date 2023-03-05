@@ -13,6 +13,7 @@ const chatRoute = require("./routes/chatRoute");
 const messageRoute = require("./routes/messageRoute");
 
 const app = express();
+const URI = "mongodb://localhost/chatapp";
 
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
@@ -35,12 +36,15 @@ app.set('io', io);
 
 // Connect to Database
 mongoose
-  .connect("mongodb://localhost/chatapp", {
+  .connect(URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
     console.log("Database connected successfully.");
+  })
+  .catch((err) => {
+    console.log(err)
   });
 
 // Template Engine
@@ -60,7 +64,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     store: MongoStore.create({
-      mongoUrl: "mongodb://localhost/chatapp",
+      mongoUrl: URI,
     }),
   })
 );
