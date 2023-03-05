@@ -93,7 +93,7 @@ app.use((req, res, next) => {
   res.status(404).render("errors/404");
 });
 
-const port = 5000;
-var server = http.listen(port, () => {
+const port = 3000;
+var server = http.listen(process.env.PORT || port, () => {
   console.log(`App started on port ${port}`);
 });
