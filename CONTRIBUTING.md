@@ -6,7 +6,7 @@ project running locally and what is expected from a pull request.
 ## Getting started
 
 ```bash
-git clone https://github.com/hasanbekir97/ChatApp.git
+git clone https://github.com/hasan-bekir-dogan/ChatApp.git
 cd ChatApp
 npm install
 cp .env.example .env

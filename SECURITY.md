@@ -12,7 +12,7 @@
 Please do not report security issues through public GitHub issues.
 
 Use GitHub's [private vulnerability
-reporting](https://github.com/hasanbekir97/ChatApp/security/advisories/new)
+reporting](https://github.com/hasan-bekir-dogan/ChatApp/security/advisories/new)
 instead. Include:
 
 - a description of the problem and the impact you expect,

@@ -3,7 +3,7 @@
 Real-time one-to-one messaging for the web, built on Express, Socket.IO and
 MongoDB.
 
-[![CI](https://github.com/hasanbekir97/ChatApp/actions/workflows/ci.yml/badge.svg)](https://github.com/hasanbekir97/ChatApp/actions/workflows/ci.yml)
+[![CI](https://github.com/hasan-bekir-dogan/ChatApp/actions/workflows/ci.yml/badge.svg)](https://github.com/hasan-bekir-dogan/ChatApp/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
 
@@ -76,7 +76,7 @@ room and the recipient's room only.
 ## Getting started
 
 ```bash
-git clone https://github.com/hasanbekir97/ChatApp.git
+git clone https://github.com/hasan-bekir-dogan/ChatApp.git
 cd ChatApp
 npm install
 cp .env.example .env
