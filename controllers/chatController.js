@@ -1,333 +1,176 @@
 const Chat = require("../models/Chat");
 const User = require("../models/User");
-const merge = require("deepmerge");
+const { asObjectId, escapeRegExp } = require("../utils/query");
 
-exports.getChat = async (req, res) => {
+function idOf(value) {
+  if (!value) return null;
+
+  return String(value._id || value);
+}
+
+/**
+ * Merges the two message arrays of a conversation into one timeline and tags
+ * each message with the role it has for the requesting user.
+ */
+function buildTimeline(chat, currentUserId) {
+  const currentIsUser1 = idOf(chat.user1Id) === String(currentUserId);
+  const sent = currentIsUser1 ? chat.user1MessageId : chat.user2MessageId;
+  const received = currentIsUser1 ? chat.user2MessageId : chat.user1MessageId;
+
+  return [
+    ...sent.map((message) => ({ ...message, userType: "sender" })),
+    ...received.map((message) => ({ ...message, userType: "receiver" })),
+  ].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+}
+
+async function toChatListItem(chat, currentUserId) {
+  const timeline = buildTimeline(chat, currentUserId);
+
+  // A conversation whose last message was deleted has nothing to preview.
+  if (timeline.length === 0) return null;
+
+  const currentIsUser1 = idOf(chat.user1Id) === String(currentUserId);
+  const receiverId = currentIsUser1 ? idOf(chat.user2Id) : idOf(chat.user1Id);
+  const receiver = await User.findById(receiverId);
+
+  if (!receiver) return null;
+
+  const lastMessage = timeline[timeline.length - 1];
+
+  return {
+    userId: receiverId,
+    image: receiver.image,
+    type: lastMessage.userType,
+    name: receiver.name,
+    date: lastMessage.createdAt,
+    lastMessage: lastMessage.text,
+  };
+}
+
+exports.getChat = async (req, res, next) => {
   try {
-    const senderUserId = req.session.userId;
-    let senderUser = 1;
+    const currentUserId = req.user._id;
 
-    let chat = await Chat.find({
-      $or: [
-        {user1Id: senderUserId},
-        {user2Id: senderUserId}
-      ]
+    const chats = await Chat.find({
+      $or: [{ user1Id: currentUserId }, { user2Id: currentUserId }],
     })
       .populate("user1MessageId")
-      .populate("user2MessageId");
+      .populate("user2MessageId")
+      .lean();
 
-    let receiveruserid, receiver, user1Messages, user2Messages;
-    let chatPlain = [];
+    const items = await Promise.all(
+      chats.map((chat) => toChatListItem(chat, currentUserId))
+    );
 
-    // parsed to add new column
-    chat = JSON.parse(JSON.stringify(chat));
+    res.status(200).json({
+      data: { chat: items.filter(Boolean) },
+      status: "success",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-    // specify receiver user id
-    for (let i = 0; i < chat.length; i ++) {
+exports.getChatDetail = async (req, res, next) => {
+  try {
+    const currentUserId = req.user._id;
+    const receiverUserId = asObjectId(req.body.receiverUserId);
 
-      if (chat[i].user1Id == senderUserId) {
-        receiveruserid = chat[i].user2Id;
-      }
-      else{
-        senderUser = 2;
-        receiveruserid = chat[i].user1Id;
-      }
-
-      user1Messages = chat[i].user1MessageId;
-      user2Messages = chat[i].user2MessageId;
-
-      // specify messages types that is sender or receiver
-      if (senderUser == 1) {
-        for (let i = 0; i < user1Messages.length; i++) {
-          user1Messages[i].userType = "sender";
-        }
-        for (let i = 0; i < user2Messages.length; i++) {
-          user2Messages[i].userType = "receiver";
-        }
-      } else {
-        for (let i = 0; i < user1Messages.length; i++) {
-          user1Messages[i].userType = "receiver";
-        }
-        for (let i = 0; i < user2Messages.length; i++) {
-          user2Messages[i].userType = "sender";
-        }
-      }
-
-      // sort by createdAt
-      let messages = merge(user1Messages, user2Messages);
-      messages.sort((a, b) => {
-        return new Date(a.createdAt) - new Date(b.createdAt);
+    if (!receiverUserId) {
+      return res.status(400).json({
+        status: "fail",
+        message: "A valid receiver id is required.",
       });
-
-      receiver = await User.findById(receiveruserid);
-
-      chatPlain.push({
-        userId: receiveruserid,
-        image: receiver.image,
-        type: messages[messages.length - 1].userType,
-        name: receiver.name,
-        date: messages[messages.length - 1].createdAt,
-        lastMessage: messages[messages.length - 1].text
-      })
-
     }
-
-    res.status(200).json({
-      data: {
-        chat: chatPlain,
-      },
-      status: "success",
-    });
-  } catch (error) {
-    res.status(400).json({
-      error,
-      status: "fail",
-    });
-  }
-};
-
-exports.getChatDetail = async (req, res) => {
-  try {
-    const senderUserId = req.session.userId;
-    const receiver = await User.findById(req.body.receiverUserId);
-
-    // receiver name and email
-    let recevierName = receiver.name;
-    let recevierEmail = receiver.email;
-    let recevierImage = receiver.image;
-
-    let senderUser = 1;
-    let chat = await Chat.findOne({
-      // if user 1 is sender
-      user1Id: senderUserId,
-      user2Id: req.body.receiverUserId,
-    })
-      .populate("user1MessageId")
-      .populate("user2MessageId");
-
-    if (!chat) {
-      senderUser = 2;
-      chat = await Chat.findOne({
-        // if user 2 is sender
-        user2Id: senderUserId,
-        user1Id: req.body.receiverUserId,
-      })
-        .populate("user1MessageId")
-        .populate("user2MessageId");
-    }
-
-    // parsed to add new column
-    const user1Messages = JSON.parse(JSON.stringify(chat.user1MessageId));
-    const user2Messages = JSON.parse(JSON.stringify(chat.user2MessageId));
-
-    // specify messages types that is sender or receiver
-    if (senderUser == 1) {
-      for (let i = 0; i < user1Messages.length; i++) {
-        user1Messages[i].usertype = "sender";
-      }
-      for (let i = 0; i < user2Messages.length; i++) {
-        user2Messages[i].usertype = "receiver";
-      }
-    } else {
-      for (let i = 0; i < user1Messages.length; i++) {
-        user1Messages[i].usertype = "receiver";
-      }
-      for (let i = 0; i < user2Messages.length; i++) {
-        user2Messages[i].usertype = "sender";
-      }
-    }
-
-    // sort by createdAt
-    let messages = merge(user1Messages, user2Messages);
-    messages.sort((a, b) => {
-      return new Date(a.createdAt) - new Date(b.createdAt);
-    });
-
-    res.status(200).json({
-      data: {
-        messages,
-        recevierName,
-        recevierEmail,
-        recevierImage
-      },
-      status: "success",
-    });
-  } catch (error) {
-    res.status(400).json({
-      error,
-      status: "fail",
-    });
-  }
-};
-
-exports.checkChatExist = async (req, res) => {
-  try {
-    const senderUserId = req.session.userId;
-    const receiverUserId = req.body.receiverUserId;
-    let checkExist;
 
     const receiver = await User.findById(receiverUserId);
 
-    // receiver name and email
-    let recevierName = receiver.name;
-    let recevierEmail = receiver.email;
-    let recevierImage = receiver.image;
-
-    const chat = await Chat.findOne({
-      $or: [
-        {
-          $and: [{ user1Id: senderUserId }, { user2Id: receiverUserId }],
-        },
-        {
-          $and: [{ user1Id: receiverUserId }, { user2Id: senderUserId }],
-        },
-      ],
-    }).then((chat) => {
-      if (chat) {
-        checkExist = true;
-      }
-      else{
-        checkExist = false;
-      }
-    });
-
-    res.status(200).json({
-      data: {
-        checkExist,
-        recevierName,
-        recevierEmail,
-        recevierImage
-      },
-      status: 'success'
-    })
-  } catch (error) {
-    res.status(400).json({
-      error,
-      status: 'fail'
-    })
-  }
-}
-
-exports.searchInChat = async (req, res) => {
-  try {
-    const senderUserId = req.session.userId;
-    let senderUser = 1;
-    let searchtext = req.body.searchtext;
-
-    let chat = await Chat.find({
-      $or: [
-        {user1Id: senderUserId},
-        {user2Id: senderUserId}
-      ]
-    })      
-      .populate("user1MessageId")
-      .populate("user2MessageId")
-      .populate({
-        path: 'user2Id',
-        match: {
-          $or: [
-            {
-              name: {
-                $regex: searchtext,
-                $options: 'i'
-              }
-            },
-            {
-              _id: senderUserId
-            }
-          ]
-        }
-      })
-      .populate({
-        path: 'user1Id',
-        match: {
-          $or: [
-            {
-              name: {
-                $regex: searchtext,
-                $options: 'i'
-              }
-            },
-            {
-              _id: senderUserId
-            }
-          ]
-        }
-      }).exec()
-
-    let receiveruserid = null, receiver, user1Messages, user2Messages;
-    let chatPlain = [];
-
-    // parsed to add new column
-    chat = JSON.parse(JSON.stringify(chat));
-
-    // specify receiver user id
-    for (let i = 0; i < chat.length; i ++) {
-      receiveruserid = null
-
-      if (chat[i].user1Id._id == senderUserId) {
-        if(chat[i].user2Id != null)
-          receiveruserid = chat[i].user2Id;
-      }
-      else if(chat[i].user2Id._id == senderUserId){
-        if(chat[i].user1Id != null) {
-          senderUser = 2;
-          receiveruserid = chat[i].user1Id;
-        }
-      }
-
-      if (receiveruserid != null) {
-
-        user1Messages = chat[i].user1MessageId;
-        user2Messages = chat[i].user2MessageId;
-
-        // specify messages types that is sender or receiver
-        if (senderUser == 1) {
-          for (let i = 0; i < user1Messages.length; i++) {
-            user1Messages[i].userType = "sender";
-          }
-          for (let i = 0; i < user2Messages.length; i++) {
-            user2Messages[i].userType = "receiver";
-          }
-        } else {
-          for (let i = 0; i < user1Messages.length; i++) {
-            user1Messages[i].userType = "receiver";
-          }
-          for (let i = 0; i < user2Messages.length; i++) {
-            user2Messages[i].userType = "sender";
-          }
-        }
-
-        // sort by createdAt
-        let messages = merge(user1Messages, user2Messages);
-        messages.sort((a, b) => {
-          return new Date(a.createdAt) - new Date(b.createdAt);
-        });
-
-        receiver = await User.findById(receiveruserid);
-
-        chatPlain.push({
-          userId: receiveruserid,
-          image: receiver.image,
-          type: messages[messages.length - 1].userType,
-          name: receiver.name,
-          date: messages[messages.length - 1].createdAt,
-          lastMessage: messages[messages.length - 1].text
-        })
-        
-      }
+    if (!receiver) {
+      return res.status(404).json({ status: "fail", message: "User not found." });
     }
 
+    const chat = await Chat.findBetween(currentUserId, receiverUserId)
+      .populate("user1MessageId")
+      .populate("user2MessageId")
+      .lean();
+
     res.status(200).json({
       data: {
-        chat: chatPlain
+        messages: chat ? buildTimeline(chat, currentUserId) : [],
+        receiverName: receiver.name,
+        receiverEmail: receiver.email,
+        receiverImage: receiver.image,
       },
-      status: 'success'
-    })
+      status: "success",
+    });
   } catch (error) {
-    res.status(400).json({
-      error,
-      status: 'fail'
-    })
+    next(error);
   }
-}
+};
+
+exports.checkChatExist = async (req, res, next) => {
+  try {
+    const currentUserId = req.user._id;
+    const receiverUserId = asObjectId(req.body.receiverUserId);
+
+    if (!receiverUserId) {
+      return res.status(400).json({
+        status: "fail",
+        message: "A valid receiver id is required.",
+      });
+    }
+
+    const receiver = await User.findById(receiverUserId);
+
+    if (!receiver) {
+      return res.status(404).json({ status: "fail", message: "User not found." });
+    }
+
+    const chat = await Chat.findBetween(currentUserId, receiverUserId);
+
+    res.status(200).json({
+      data: {
+        checkExist: Boolean(chat),
+        receiverName: receiver.name,
+        receiverEmail: receiver.email,
+        receiverImage: receiver.image,
+      },
+      status: "success",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.searchInChat = async (req, res, next) => {
+  try {
+    const currentUserId = req.user._id;
+    const pattern = new RegExp(escapeRegExp(req.body.searchtext), "i");
+
+    const chats = await Chat.find({
+      $or: [{ user1Id: currentUserId }, { user2Id: currentUserId }],
+    })
+      .populate("user1MessageId")
+      .populate("user2MessageId")
+      .lean();
+
+    const matches = await Promise.all(
+      chats.map(async (chat) => {
+        const currentIsUser1 = idOf(chat.user1Id) === String(currentUserId);
+        const receiverId = currentIsUser1 ? idOf(chat.user2Id) : idOf(chat.user1Id);
+        const receiver = await User.findById(receiverId);
+
+        if (!receiver || !pattern.test(receiver.name)) return null;
+
+        return toChatListItem(chat, currentUserId);
+      })
+    );
+
+    res.status(200).json({
+      data: { chat: matches.filter(Boolean) },
+      status: "success",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

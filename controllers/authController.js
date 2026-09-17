@@ -1,80 +1,84 @@
-const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 const User = require("../models/User");
+const { asString } = require("../utils/query");
 
-exports.createUser = async (req, res) => {
+function flashValidationErrors(req, fallbackMessage) {
+  const errors = validationResult(req).array();
+
+  if (errors.length === 0) {
+    req.flash("error", fallbackMessage);
+    return;
+  }
+
+  errors.forEach((error) => req.flash("error", error.msg));
+}
+
+exports.createUser = async (req, res, next) => {
   try {
+    if (!validationResult(req).isEmpty()) {
+      flashValidationErrors(req, "Registration failed.");
+      return res.redirect("/register");
+    }
+
     if (req.body.password !== req.body.confirmPassword) {
       req.flash("error", "Password and Confirm Password must be same!");
-
-      res.status(400).redirect("/register");
-    } else {
-      const user = await User.create({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-      });
-
-      res.status(201).redirect("/login");
+      return res.redirect("/register");
     }
+
+    await User.create({
+      name: asString(req.body.name),
+      email: asString(req.body.email).toLowerCase(),
+      password: asString(req.body.password),
+    });
+
+    res.redirect("/login");
   } catch (error) {
-    const errors = validationResult(req);
-
-    for (let i = 0; i < errors.array().length; i++) {
-      req.flash("error", `${errors.array()[i].msg}`);
+    if (error.name === "ValidationError" || error.code === 11000) {
+      req.flash("error", "Registration failed. Please check your details.");
+      return res.redirect("/register");
     }
 
-    res.status(400).redirect("/register");
+    next(error);
   }
 };
 
-exports.loginUser = async (req, res) => {
+exports.loginUser = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email }).then((user) => {
-      if (user) {
-        bcrypt.compare(password, user.password, (err, same) => {
-          if (same) {
-            req.session.userId = user._id;
-            res.status(200).redirect("/");
-          } else {
-            req.flash("error", "Your password is not correct!");
-            res.status(200).redirect("/login");
-          }
-        });
-      } else {
-        const errors = validationResult(req);
-
-        for (let k = 0; k < errors.array().length; k++) {
-          req.flash("error", `${errors.array()[k].msg}`);
-        }
-
-        if (errors.array().length === 0) req.flash("error", "User not exists!");
-
-        res.status(400).redirect("/login");
-      }
-    });
-  } catch (error) {
-    const errors = validationResult(req);
-
-    for (let i = 0; i < errors.array().length; i++) {
-      req.flash("error", `${errors.array()[i].msg}`);
+    if (!validationResult(req).isEmpty()) {
+      flashValidationErrors(req, "Login failed.");
+      return res.redirect("/login");
     }
 
-    req.status(400).redirect("/login");
+    const email = asString(req.body.email).toLowerCase();
+    const password = asString(req.body.password);
+    const user = await User.findOne({ email });
+
+    // The same message is used for an unknown address and a wrong password so
+    // the response cannot be used to enumerate registered users.
+    const passwordMatches = user ? await user.comparePassword(password) : false;
+
+    if (!passwordMatches) {
+      req.flash("error", "E-mail or password is not correct!");
+      return res.redirect("/login");
+    }
+
+    // A fresh session id on login closes the session fixation window.
+    req.session.regenerate((error) => {
+      if (error) return next(error);
+
+      req.session.userId = user._id;
+      res.redirect("/");
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
-exports.logoutUser = async (req, res) => {
-  try {
-    req.session.destroy(() => {
-      res.redirect("/login");
-    });
-  } catch (error) {
-    res.status(404).json({
-      error,
-      status: "fail",
-    });
-  }
+exports.logoutUser = (req, res, next) => {
+  req.session.destroy((error) => {
+    if (error) return next(error);
+
+    res.clearCookie("chatapp.sid");
+    res.redirect("/login");
+  });
 };

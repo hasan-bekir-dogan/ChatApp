@@ -1,112 +1,116 @@
 const Message = require("../models/Message");
 const Chat = require("../models/Chat");
-const User = require('../models/User')
+const User = require("../models/User");
+const { asObjectId, asString } = require("../utils/query");
 
-
-exports.sendMessage = async (req, res) => {
+exports.sendMessage = async (req, res, next) => {
   try {
-    const v_senderUserId = req.session.userId;
-    const message = await Message.create({
-      text: req.body.text,
-    });
+    const senderUserId = req.user._id;
+    const receiverUserId = asObjectId(req.body.receiverUserId);
+    const text = asString(req.body.text);
 
-    const chat1 = await Chat.findOne({
-      // this is for action when sender is user 1
-      user1Id: v_senderUserId,
-      user2Id: req.body.receiverUserId,
-    }).then(async (chat1) => {
-      if (chat1) {
-        await chat1.user1MessageId.push({
-          _id: message._id,
-        });
-        await chat1.save();
-      } else {
-        const chat2 = await Chat.findOne({
-          // this is for action when sender is user 2
-          user1Id: req.body.receiverUserId,
-          user2Id: v_senderUserId,
-        }).then(async (chat2) => {
-          if (chat2) {
-            await chat2.user2MessageId.push({
-              _id: message._id,
-            });
-            await chat2.save();
-          } else {
-            await Chat.create({
-              user1Id: v_senderUserId,
-              user1MessageId: message._id,
-              user2Id: req.body.receiverUserId,
-            });
-          }
-        });
-      }
-    });
+    if (!receiverUserId) {
+      return res.status(400).json({
+        status: "fail",
+        message: "A valid receiver id is required.",
+      });
+    }
 
-    const receiverUser = await User.findById(req.body.receiverUserId);
+    if (!text) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Message text cannot be empty.",
+      });
+    }
+
+    const receiverUser = await User.findById(receiverUserId);
+
+    if (!receiverUser) {
+      return res.status(404).json({ status: "fail", message: "User not found." });
+    }
+
+    const message = await Message.create({ text });
+    const chat = await Chat.findBetween(senderUserId, receiverUserId);
+
+    if (!chat) {
+      await Chat.create({
+        user1Id: senderUserId,
+        user1MessageId: [message._id],
+        user2Id: receiverUserId,
+      });
+    } else {
+      const senderIsUser1 = String(chat.user1Id) === String(senderUserId);
+      const bucket = senderIsUser1 ? chat.user1MessageId : chat.user2MessageId;
+
+      bucket.push(message._id);
+      await chat.save();
+    }
 
     res.status(201).json({
       data: {
         messageId: message._id,
         messageDate: message.createdAt,
         receiverUserName: receiverUser.name,
-        receiverUserImage: receiverUser.image
+        receiverUserImage: receiverUser.image,
       },
       status: "success",
     });
   } catch (error) {
-    res.status(400).json({
-      error,
-      status: "fail",
-    });
+    next(error);
   }
 };
 
-exports.deleteMessage = async (req, res) => {
+exports.deleteMessage = async (req, res, next) => {
   try {
-    const messageId = req.body.messageId;
-    const receiverUserId = req.body.receiverUserId;
-    const senderUserId = req.session.userId;
-    let checkChatEmpty = false;
+    const senderUserId = req.user._id;
+    const receiverUserId = asObjectId(req.body.receiverUserId);
+    const messageId = asObjectId(req.body.messageId);
 
-    const chat = await Chat.findOne({
-      $or: [
-        {
-          $and: [{ user1Id: senderUserId }, { user2Id: receiverUserId }],
-        },
-        {
-          $and: [{ user1Id: receiverUserId }, { user2Id: senderUserId }],
-        },
-      ],
-    });
-
-    const chatMsgDelete = await Chat.findById(chat._id);
-    await chatMsgDelete.user1MessageId.pull({ _id: messageId });
-    await chatMsgDelete.user2MessageId.pull({ _id: messageId });
-    await chatMsgDelete.save();
-
-    await Message.findByIdAndRemove({_id: messageId})
-
-    // delete chat if there is no message (begin)
-    let checkChat = await Chat.findById(chat._id)
-    .populate('user1MessageId')
-    .populate('user2MessageId');
-
-    if(checkChat.user1MessageId[0] == null && checkChat.user2MessageId[0] == null) {
-      await Chat.findByIdAndRemove({_id: chat._id})
-      checkChatEmpty = true;
+    if (!receiverUserId || !messageId) {
+      return res.status(400).json({
+        status: "fail",
+        message: "A valid receiver id and message id are required.",
+      });
     }
-    // delete chat if there is no message (end)
 
+    const chat = await Chat.findBetween(senderUserId, receiverUserId);
+
+    if (!chat) {
+      return res.status(404).json({ status: "fail", message: "Chat not found." });
+    }
+
+    // Only the author of a message may delete it, and only from a chat they
+    // take part in. Without this check any signed-in user could delete any
+    // message by guessing its id.
+    const senderIsUser1 = String(chat.user1Id) === String(senderUserId);
+    const ownMessages = senderIsUser1 ? chat.user1MessageId : chat.user2MessageId;
+    const owned = ownMessages.some((id) => String(id) === messageId);
+
+    if (!owned) {
+      return res.status(403).json({
+        status: "fail",
+        message: "You can only delete your own messages.",
+      });
+    }
+
+    ownMessages.pull(messageId);
+    await chat.save();
+    await Message.findByIdAndDelete(messageId);
+
+    // A conversation with no messages left is removed as well, so it stops
+    // showing up in the chat list.
+    const isEmpty =
+      chat.user1MessageId.length === 0 && chat.user2MessageId.length === 0;
+
+    if (isEmpty) {
+      await Chat.findByIdAndDelete(chat._id);
+    }
 
     res.status(200).json({
-      checkChatEmpty,
-      status: "success"
+      checkChatEmpty: isEmpty,
+      status: "success",
     });
   } catch (error) {
-    res.status(400).json({
-      error,
-      status: "fail",
-    });
+    next(error);
   }
 };
-

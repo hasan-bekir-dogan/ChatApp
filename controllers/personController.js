@@ -1,129 +1,98 @@
-const { validationResult } = require("express-validator");
 const User = require("../models/User");
+const { asObjectId, asString } = require("../utils/query");
 
-exports.createPerson = async (req, res) => {
+function serializeContacts(user) {
+  return user.phoneBook.map((contact) => ({
+    _id: contact._id,
+    name: contact.name,
+    email: contact.email,
+    image: contact.image,
+  }));
+}
+
+exports.createPerson = async (req, res, next) => {
   try {
-    // validation (begin)
-    let errormessage = [];
-    let checkVal = true;
+    const email = asString(req.body.email).toLowerCase();
 
-    if (req.body.email === "") {
-      errormessage.push({
-        message: "E-mail must have some value.",
-      });
-      checkVal = false;
-    }
-
-    if (checkVal === false) {
-      res.status(422).json({
-        errorMessages: errormessage,
+    if (!email) {
+      return res.status(422).json({
+        errorMessages: [{ message: "E-mail must have some value." }],
         status: "validation",
       });
-
-      return;
     }
 
-    await User.findOne({
-      email: req.body.email,
-    }).then(async (person) => {
-      if (!person) {
-        errormessage.push({
-          message: "User does not exist.",
-        });
+    const person = await User.findOne({ email });
 
-        checkVal = false;
-      }
-    });
-
-    await User.findById(req.session.userId).populate({
-      path: 'phoneBook',
-      match: {
-        email: req.body.email
-      }
-    }).then(async (person) => {
-      if (person.phoneBook[0]) {
-        errormessage.push({
-          message: "User is already added.",
-        });
-
-        checkVal = false;
-      }
-    })
-
-    if (checkVal === false) {
-      res.status(422).json({
-        errorMessages: errormessage,
+    if (!person) {
+      return res.status(422).json({
+        errorMessages: [{ message: "User does not exist." }],
         status: "validation",
       });
-
-      return;
     }
-    // validation (end)
 
+    if (String(person._id) === String(req.user._id)) {
+      return res.status(422).json({
+        errorMessages: [{ message: "You cannot add yourself." }],
+        status: "validation",
+      });
+    }
 
-    const person = await User.findOne({
-      email: req.body.email,
-    }).then(async (person) => {
-      if (person) {
-        const user = await User.findById(req.session.userId);
-        await user.phoneBook.push({
-          _id: person._id,
-        });
-        await user.save();
-      }
-    });
-
-    const contacts = await User.findById(req.session.userId).populate(
-      "phoneBook"
+    const user = await User.findById(req.user._id);
+    const alreadyAdded = user.phoneBook.some(
+      (contactId) => String(contactId) === String(person._id)
     );
+
+    if (alreadyAdded) {
+      return res.status(422).json({
+        errorMessages: [{ message: "User is already added." }],
+        status: "validation",
+      });
+    }
+
+    user.phoneBook.push(person._id);
+    await user.save();
+    await user.populate("phoneBook");
 
     res.status(201).json({
-      data: {
-        contacts: contacts.phoneBook,
-      },
+      data: { contacts: serializeContacts(user) },
       status: "success",
     });
   } catch (error) {
-    res.status(400).json({
-      error,
-      status: "fail",
-    });
+    next(error);
   }
 };
 
-exports.listPerson = async (req, res) => {
+exports.listPerson = async (req, res, next) => {
   try {
-    const contacts = await User.findById(req.session.userId).populate(
-      "phoneBook"
-    );
+    const user = await User.findById(req.user._id).populate("phoneBook");
 
     res.status(200).json({
-      data: {
-        contacts: contacts.phoneBook,
-      },
+      data: { contacts: serializeContacts(user) },
       status: "success",
     });
   } catch (error) {
-    res.status(400).json({
-      error,
-      status: "fail",
-    });
+    next(error);
   }
 };
 
-exports.deletePerson = async (req, res) => {
+exports.deletePerson = async (req, res, next) => {
   try {
-    const user = await User.findById(req.session.userId);
-    await user.phoneBook.pull({ _id: req.body.userId });
+    const contactId = asObjectId(req.body.userId);
+
+    if (!contactId) {
+      return res.status(400).json({
+        status: "fail",
+        message: "A valid contact id is required.",
+      });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    user.phoneBook.pull(contactId);
     await user.save();
 
-    res.status(200).json({
-      status: "success",
-    });
+    res.status(200).json({ status: "success" });
   } catch (error) {
-    res.status(400).json({
-      error,
-      status: "fail",
-    });
+    next(error);
   }
 };
