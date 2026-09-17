@@ -1,0 +1,25 @@
+# Normalize line endings: LF in the repository, native on checkout.
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Vendored assets are excluded from language statistics and diffs
+public/css/bootstrap*.css linguist-vendored
+public/css/fontawesome/** linguist-vendored
+public/css/sweetalert2*.css linguist-vendored
+public/css/toastr.css linguist-vendored
+public/js/bootstrap*.js linguist-vendored
+public/js/jquery.min.js linguist-vendored
+public/js/sweetalert*.js linguist-vendored
+public/js/toastr.js linguist-vendored
+*.map -diff linguist-generated
+package-lock.json -diff linguist-generated
