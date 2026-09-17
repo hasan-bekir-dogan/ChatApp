@@ -1,13 +1,14 @@
-const { application } = require("express");
 const express = require("express");
 const chatController = require("../controllers/chatController");
-const { body } = require("express-validator");
+const { requireAuthApi } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-router.route("/").get(chatController.getChat);
-router.route("/detail").post(chatController.getChatDetail);
-router.route("/check-exist").post(chatController.checkChatExist);
-router.route("/search").post(chatController.searchInChat);
+router.use(requireAuthApi);
+
+router.get("/", chatController.getChat);
+router.post("/detail", chatController.getChatDetail);
+router.post("/check-exist", chatController.checkChatExist);
+router.post("/search", chatController.searchInChat);
 
 module.exports = router;

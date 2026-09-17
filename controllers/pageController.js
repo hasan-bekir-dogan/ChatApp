@@ -1,14 +1,9 @@
-const User = require("../models/User");
-
-exports.getIndexPage = async (req, res) => {
-  const user = await User.findOne({
-    _id: req.session.userId,
-  });
-
+exports.getIndexPage = (req, res) => {
   res.status(200).render("index", {
-    myName: user.name,
-    myEmail: user.email,
-    myProfilePhoto: user.image
+    myUserId: req.user._id,
+    myName: req.user.name,
+    myEmail: req.user.email,
+    myProfilePhoto: req.user.image,
   });
 };
 

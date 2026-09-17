@@ -1,12 +1,14 @@
-const { application } = require("express");
 const express = require("express");
 const pageController = require("../controllers/pageController");
-const authMiddleware = require("../middlewares/authMiddleware");
+const {
+  requireAuthPage,
+  redirectIfAuthenticated,
+} = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-router.route("/").get(authMiddleware, pageController.getIndexPage);
-router.route("/login").get(pageController.getLoginPage);
-router.route("/register").get(pageController.getRegisterPage);
+router.get("/", requireAuthPage, pageController.getIndexPage);
+router.get("/login", redirectIfAuthenticated, pageController.getLoginPage);
+router.get("/register", redirectIfAuthenticated, pageController.getRegisterPage);
 
 module.exports = router;
