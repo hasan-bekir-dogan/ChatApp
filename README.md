@@ -188,8 +188,10 @@ npm test
 ```
 
 It covers registration and login, the authentication guards on every JSON
-endpoint, contact management, message ownership on delete, and the query
-sanitising helpers.
+endpoint, contact management, message ownership on delete, the query sanitising
+helpers, and socket delivery: a message reaches the recipient, never a third
+user, and a forged sender in the payload is replaced by the one from the
+session.
 
 ## Security notes
 
