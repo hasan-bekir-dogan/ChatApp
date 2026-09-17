@@ -1,11 +1,13 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const { use } = require("../routes/pageRoute");
-const Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
 
 const MessageSchema = new Schema({
   text: {
     type: String,
+    required: true,
+    trim: true,
+    maxlength: 5000,
   },
   createdAt: {
     type: Date,
@@ -13,5 +15,4 @@ const MessageSchema = new Schema({
   },
 });
 
-const Message = mongoose.model("Message", MessageSchema);
-module.exports = Message;
+module.exports = mongoose.model("Message", MessageSchema);
