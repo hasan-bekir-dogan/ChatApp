@@ -34,7 +34,7 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - name: Cache the MongoDB binary used by the test suite
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/mongodb-binaries
           key: mongodb-binaries-${{ runner.os }}
