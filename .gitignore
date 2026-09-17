@@ -143,6 +143,18 @@ dist
 
 # private folders
 /public/images/old-image
-/public/uploads/
+/public/uploads/*
+!/public/uploads/.gitkeep
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Test output
+coverage/
+
+# Playwright MCP output
+.playwright-mcp/

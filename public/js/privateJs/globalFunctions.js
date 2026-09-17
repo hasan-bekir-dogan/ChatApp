@@ -34,8 +34,6 @@ function hideChatDetailAjaxLoader() {
 }
 // ajax loader (end)
 
-
-
 // contacts (begin)
 function showContacts() {
   showChatAjaxLoader();
@@ -48,7 +46,7 @@ function showContacts() {
       if (response.status == "success") {
         let contactshtml = "";
 
-        let contactsdata = response.data.contacts;
+        const contactsdata = response.data.contacts;
 
         // Search
         contactshtml += `<div class="searchMainArea">
@@ -125,12 +123,22 @@ function showCreatePerson() {
 
 function createPerson() {
   // get data
-  let personemail = $(".surface .main .person .profileArea.createPersonArea .formElement #personEmail").val();
+  const personemail = $(
+    ".surface .main .person .profileArea.createPersonArea .formElement #personEmail"
+  ).val();
 
   // disable elements
-  $(".surface .main .person .profileArea.createPersonArea .formElement #personEmail").prop("disabled", true);
-  $(".surface .main .person .profileArea.createPersonArea .buttonsArea .cancel").prop("disabled", true);
-  $(".surface .main .person .profileArea.createPersonArea .buttonsArea .create").prop("disabled", true);
+  $(
+    ".surface .main .person .profileArea.createPersonArea .formElement #personEmail"
+  ).prop("disabled", true);
+  $(".surface .main .person .profileArea.createPersonArea .buttonsArea .cancel").prop(
+    "disabled",
+    true
+  );
+  $(".surface .main .person .profileArea.createPersonArea .buttonsArea .create").prop(
+    "disabled",
+    true
+  );
 
   $.ajax({
     url: "/person/create",
@@ -141,34 +149,41 @@ function createPerson() {
     },
     success: (response) => {
       if (response.status == "success") {
-        showContacts()
+        showContacts();
 
-        toastr.success('Person successfully created.')
+        toastr.success("Person successfully created.");
       }
     },
     error: (response) => {
-      let res = response.responseJSON
+      const res = response.responseJSON;
 
-      if (res.status == 'fail') {
+      if (res.status == "fail") {
         // clear error
-        $('.surface .main .person .profileArea .alertError').remove()
+        $(".surface .main .person .profileArea .alertError").remove();
 
-        toastr.error('You got an error!')
-      }
-      else if (res.status == 'validation') {
-        let errormessage = getErrorMessageHtml(res.errorMessages)
+        toastr.error("You got an error!");
+      } else if (res.status == "validation") {
+        const errormessage = getErrorMessageHtml(res.errorMessages);
 
         // clear error
-        $('.surface .main .person .profileArea.createPersonArea .alertError').remove()
+        $(".surface .main .person .profileArea.createPersonArea .alertError").remove();
 
         // show error
-        $('.surface .main .person .profileArea.createPersonArea .headerArea').after(errormessage);
+        $(".surface .main .person .profileArea.createPersonArea .headerArea").after(
+          errormessage
+        );
       }
-      
+
       // enable apply changes button
-      $(".surface .main .person .profileArea.createPersonArea .formElement #personEmail").prop("disabled", false);
-      $(".surface .main .person .profileArea.createPersonArea .buttonsArea .cancel").prop("disabled", false);
-      $(".surface .main .person .profileArea.createPersonArea .buttonsArea .create").prop("disabled", false);
+      $(
+        ".surface .main .person .profileArea.createPersonArea .formElement #personEmail"
+      ).prop("disabled", false);
+      $(
+        ".surface .main .person .profileArea.createPersonArea .buttonsArea .cancel"
+      ).prop("disabled", false);
+      $(
+        ".surface .main .person .profileArea.createPersonArea .buttonsArea .create"
+      ).prop("disabled", false);
     },
   });
 }
@@ -184,18 +199,18 @@ function deletePerson(p_userId) {
     confirmButtonText: "Yes, delete it!",
   }).then((result) => {
     if (result.isConfirmed) {
-
       $.ajax({
         url: "/person/delete",
         method: "DELETE",
         dataType: "json",
         data: {
-          userId: p_userId
+          userId: p_userId,
         },
         success: (response) => {
           if (response.status == "success") {
-            
-            $(`.surface .main .person .personList.contactsArea .eachPerson.contacts[data-id="${p_userId}"]`).remove()
+            $(
+              `.surface .main .person .personList.contactsArea .eachPerson.contacts[data-id="${p_userId}"]`
+            ).remove();
 
             toastr.success("Message has been deleted.");
           }
@@ -209,8 +224,6 @@ function deletePerson(p_userId) {
 }
 // contacts (end)
 
-
-
 // chat (begin)
 function showChat() {
   showChatAjaxLoader();
@@ -222,7 +235,7 @@ function showChat() {
     success: (response) => {
       if (response.status == "success") {
         let chathtml = "";
-        let chat = response.data.chat;
+        const chat = response.data.chat;
         let date;
 
         // Search Header
@@ -281,7 +294,7 @@ function showChat() {
         $("#mainSettingArea .chat").addClass("active");
         $(chathtml).insertAfter(".profileInfoArea");
 
-        searchInChat()
+        searchInChat();
       }
     },
     error: (response) => {
@@ -304,18 +317,19 @@ function showChatDetail(p_receiverUserId) {
       if (response.status == "success") {
         let chatdetailhtml = "";
         let chatmaindetailhtml = "";
-        let messages = response.data.messages;
-        let receiverName = response.data.recevierName;
-        let receiverEmail = response.data.recevierEmail;
-        let recevierImage = response.data.recevierImage;
+        const messages = response.data.messages;
+        const receiverName = response.data.receiverName;
+        const receiverEmail = response.data.receiverEmail;
+        const receiverImage = response.data.receiverImage;
         let date;
-        let message = "", endOfDate;
+        let message = "",
+          endOfDate;
 
         // Chat each message
         for (let i = 0; i < messages.length; i++) {
           chatdetailhtml += `<div class="eachMessage `;
 
-          if (messages[i].usertype == "sender") chatdetailhtml += "me";
+          if (messages[i].userType == "sender") chatdetailhtml += "me";
           else chatdetailhtml += "you";
 
           chatdetailhtml += `" data-id="${messages[i]._id}">
@@ -344,7 +358,7 @@ function showChatDetail(p_receiverUserId) {
                       </div>`;
 
           if (i == messages.length - 1) {
-            if (messages[i].usertype == "sender") message += "Me: ";
+            if (messages[i].userType == "sender") message += "Me: ";
 
             message += messages[i].text;
             endOfDate = date;
@@ -355,7 +369,7 @@ function showChatDetail(p_receiverUserId) {
           chatmaindetailhtml += `<div class="bodyBackground"></div>
                                   <div class="header">
                                       <div class="infoArea">
-                                          <img class="profilePhoto" src="${recevierImage}" alt="">
+                                          <img class="profilePhoto" src="${receiverImage}" alt="">
                                           <div class="content">
                                               <div class="name">
                                                   ${receiverName}
@@ -382,20 +396,26 @@ function showChatDetail(p_receiverUserId) {
                                   </div>`;
 
           $(".surface .main .personDetail").removeClass("mainPage");
-          $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`).addClass("active");
+          $(
+            `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`
+          ).addClass("active");
 
           $(".surface .main .personDetail").html(chatmaindetailhtml);
         } else {
           // set receiver name and email in detail side
           $(".personDetail .header .infoArea .content .name").html(receiverName);
-          $(".personDetail .header .infoArea .content .shortDetail").html(receiverEmail);
-          $(".personDetail .header .infoArea .profilePhoto").attr('src', recevierImage);
+          $(".personDetail .header .infoArea .content .shortDetail").html(
+            receiverEmail
+          );
+          $(".personDetail .header .infoArea .profilePhoto").attr("src", receiverImage);
 
           // hide ajax loader
           hideChatDetailAjaxLoader();
 
           // set chat detail body
-          $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`).addClass("active");
+          $(
+            `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`
+          ).addClass("active");
 
           $(".surface .main .personDetail .body").html(chatdetailhtml);
         }
@@ -403,16 +423,24 @@ function showChatDetail(p_receiverUserId) {
         $(".surface .main .personDetail").attr("data-id", p_receiverUserId);
 
         // scroll bottom on person detail area
-        let scroll_to_bottom = document.getElementById("chatBody");
+        const scroll_to_bottom = document.getElementById("chatBody");
         scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
 
         // active each person
-        $('.surface .main .person .personList .eachPerson.active').removeClass('active')
-        $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`).addClass('active')
+        $(".surface .main .person .personList .eachPerson.active").removeClass(
+          "active"
+        );
+        $(
+          `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`
+        ).addClass("active");
 
         // set active person info
-        $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .content .shortDetail`).html(message);
-        $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .time`).html(endOfDate);
+        $(
+          `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .content .shortDetail`
+        ).html(message);
+        $(
+          `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .time`
+        ).html(endOfDate);
       }
     },
     error: (response) => {
@@ -422,31 +450,29 @@ function showChatDetail(p_receiverUserId) {
 }
 
 function startChat(p_receiverUserId) {
-
   $.ajax({
-    url: '/chat/check-exist',
-    method: 'POST',
-    dataType: 'json',
+    url: "/chat/check-exist",
+    method: "POST",
+    dataType: "json",
     data: {
-      receiverUserId: p_receiverUserId
+      receiverUserId: p_receiverUserId,
     },
     success: (response) => {
-      if (response.status == 'success') {
+      if (response.status == "success") {
         if (response.data.checkExist == true) {
-          showChatDetail(p_receiverUserId)
-        }
-        else {
-          let chatdetailhtml = "";
+          showChatDetail(p_receiverUserId);
+        } else {
+          const chatdetailhtml = "";
           let chatmaindetailhtml = "";
-          let receiverName = response.data.recevierName;
-          let receiverEmail = response.data.recevierEmail;
-          let recevierImage = response.data.recevierImage;
+          const receiverName = response.data.receiverName;
+          const receiverEmail = response.data.receiverEmail;
+          const receiverImage = response.data.receiverImage;
 
           if ($(".surface .main .personDetail").hasClass("mainPage")) {
             chatmaindetailhtml += `<div class="bodyBackground"></div>
                                     <div class="header">
                                         <div class="infoArea">
-                                            <img class="profilePhoto" src="${recevierImage}" alt="">
+                                            <img class="profilePhoto" src="${receiverImage}" alt="">
                                             <div class="content">
                                                 <div class="name">
                                                     ${receiverName}
@@ -473,21 +499,29 @@ function startChat(p_receiverUserId) {
                                     </div>`;
 
             $(".surface .main .personDetail").removeClass("mainPage");
-            $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`).addClass("active");
+            $(
+              `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`
+            ).addClass("active");
 
             $(".surface .main .personDetail").html(chatmaindetailhtml);
-          }
-          else {
+          } else {
             // set receiver name and email in detail side
             $(".personDetail .header .infoArea .content .name").html(receiverName);
-            $(".personDetail .header .infoArea .content .shortDetail").html(receiverEmail);
-            $(".personDetail .header .infoArea .profilePhoto").attr('src', recevierImage);
+            $(".personDetail .header .infoArea .content .shortDetail").html(
+              receiverEmail
+            );
+            $(".personDetail .header .infoArea .profilePhoto").attr(
+              "src",
+              receiverImage
+            );
 
             // hide ajax loader
             hideChatDetailAjaxLoader();
 
             // set chat detail body
-            $( `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`).addClass("active");
+            $(
+              `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"]`
+            ).addClass("active");
 
             $(".surface .main .personDetail .body").html(chatdetailhtml);
           }
@@ -495,37 +529,40 @@ function startChat(p_receiverUserId) {
           $(".surface .main .personDetail").attr("data-id", p_receiverUserId);
 
           // scroll bottom on person detail area
-          let scroll_to_bottom = document.getElementById("chatBody");
+          const scroll_to_bottom = document.getElementById("chatBody");
           scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
         }
-        
+
         // active each person
-        $('.surface .main .person .personList.contactsArea .eachPerson.contacts.active').removeClass('active')
-        $(`.surface .main .person .personList.contactsArea .eachPerson.contacts[data-id="${p_receiverUserId}"]`).addClass('active')
+        $(
+          ".surface .main .person .personList.contactsArea .eachPerson.contacts.active"
+        ).removeClass("active");
+        $(
+          `.surface .main .person .personList.contactsArea .eachPerson.contacts[data-id="${p_receiverUserId}"]`
+        ).addClass("active");
       }
     },
     error: (response) => {
-      toastr.error('You got an error!')
-    }
-  })
-
+      toastr.error("You got an error!");
+    },
+  });
 }
 
 function searchInChat() {
-  $('.surface .main .person .searchArea #searchInChat').on('input', function () {
-    let searchtext = $('.surface .main .person .searchArea #searchInChat').val();
+  $(".surface .main .person .searchArea #searchInChat").on("input", function () {
+    const searchtext = $(".surface .main .person .searchArea #searchInChat").val();
 
     $.ajax({
-      url: '/chat/search',
-      method: 'POST',
-      datatype: 'json',
+      url: "/chat/search",
+      method: "POST",
+      datatype: "json",
       data: {
-        searchtext
+        searchtext,
       },
       success: (response) => {
-        if (response.status == 'success') {
+        if (response.status == "success") {
           let chathtml = "";
-          let chat = response.data.chat;
+          const chat = response.data.chat;
           let date;
 
           // Main chat Each Person
@@ -566,26 +603,23 @@ function searchInChat() {
           $("#mainSettingArea >button").removeClass("active");
           $("#mainSettingArea .chat").addClass("active");
           $(".surface .main .person .personList").html(chathtml);
-
         }
       },
       error: (Response) => {
-        toastr.error('You got an error!')
-      }
-    })
-  })
+        toastr.error("You got an error!");
+      },
+    });
+  });
 }
 // chat (end)
 
-
-
 // message (begin)
 function sendMessage() {
-  let v_message = $(".surface .main .personDetail .footer .text").val();
+  const v_message = $(".surface .main .personDetail .footer .text").val();
 
   if (v_message.trim() != "") {
-    let v_receiverUserId = $(".surface .main .personDetail").attr("data-id");
-    let v_senderUserId = $(".surface .main .person .profileInfoArea").attr("data-id");
+    const v_receiverUserId = $(".surface .main .personDetail").attr("data-id");
+    const v_senderUserId = $(".surface .main .person .profileInfoArea").attr("data-id");
 
     $.ajax({
       url: "/message/send",
@@ -597,16 +631,14 @@ function sendMessage() {
       },
       success: (response) => {
         if (response.status == "success") {
-
-          var socket = io();
-          let o_message = {
+          const o_message = {
             senderUserId: v_senderUserId,
             receiverUserId: v_receiverUserId,
             messageId: response.data.messageId,
             messageDate: response.data.messageDate,
             text: v_message,
             receiverUserName: response.data.receiverUserName,
-            receiverUserImage: response.data.receiverUserImage
+            receiverUserImage: response.data.receiverUserImage,
           };
           socket.emit("add chat message", o_message);
 
@@ -620,21 +652,32 @@ function sendMessage() {
   }
 }
 
-function sendMessageKeyPress(event){
-  if(event.keyCode == 13){ // enter key code
-    if(!event.shiftKey){  // if it is not shift enter
-        sendMessage()
+function sendMessageKeyPress(event) {
+  if (event.keyCode == 13) {
+    // enter key code
+    if (!event.shiftKey) {
+      // if it is not shift enter
+      sendMessage();
     }
   }
 }
 
-function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messageDate, p_text, p_receiverUserName, p_receiverUserImage) {
-  v_currentUserId = $('.surface .main .person .profileInfoArea').attr('data-id');
+function addMessageToHtml(
+  p_senderUserId,
+  p_receiverUserId,
+  p_messageId,
+  p_messageDate,
+  p_text,
+  p_receiverUserName,
+  p_receiverUserImage
+) {
+  v_currentUserId = $(".surface .main .person .profileInfoArea").attr("data-id");
 
   // sender user (begin)
-  if(v_currentUserId == p_senderUserId){  // sender user
-    let messagehtml = '';
-    let lastMessage = '';
+  if (v_currentUserId == p_senderUserId) {
+    // sender user
+    let messagehtml = "";
+    let lastMessage = "";
 
     messagehtml += `<div class="eachMessage me" data-id="${p_messageId}">
                     <div class="subRegion">
@@ -663,30 +706,46 @@ function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messa
                 </div>`;
 
     // update chat detail
-    if($(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`).html().trim() != '')
-      $(messagehtml).insertAfter(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body .eachMessage:last-child`)
-    else{
-      $(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`).html(messagehtml)
+    if (
+      $(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`)
+        .html()
+        .trim() != ""
+    )
+      $(messagehtml).insertAfter(
+        `.surface .main .personDetail[data-id="${p_receiverUserId}"] .body .eachMessage:last-child`
+      );
+    else {
+      $(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`).html(
+        messagehtml
+      );
     }
 
     // update chat
-    lastMessage = 'Me: ' + p_text
-    $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .content .shortDetail`).html(lastMessage)
-    $(`.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .time`).html(date)
+    lastMessage = "Me: " + p_text;
+    $(
+      `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .content .shortDetail`
+    ).html(lastMessage);
+    $(
+      `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .time`
+    ).html(date);
 
     // scroll bottom on person detail area
-    let bodHeight = $(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`).prop('scrollHeight')
-    $(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`).scrollTop(bodHeight)
+    const bodHeight = $(
+      `.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`
+    ).prop("scrollHeight");
+    $(`.surface .main .personDetail[data-id="${p_receiverUserId}"] .body`).scrollTop(
+      bodHeight
+    );
   }
   // sender user (end)
 
   /*********************************************************************************/
 
   // receiver user (begin)
-  if(v_currentUserId == p_receiverUserId){
-    let messagehtml = '';
-    let lastMessage = '';
-    let v_receiverUserId = p_senderUserId;
+  if (v_currentUserId == p_receiverUserId) {
+    let messagehtml = "";
+    let lastMessage = "";
+    const v_receiverUserId = p_senderUserId;
 
     messagehtml += `<div class="eachMessage you" data-id="${p_messageId}">
                     <div class="subRegion">
@@ -714,9 +773,12 @@ function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messa
                     </div>
                 </div>`;
 
-
     // add chat if it is shown in html (begin)
-    if($('.surface .main .person .personList .eachPerson').attr('data-id') != v_receiverUserId || $('.surface .main .person .personList').html() == '') {
+    if (
+      $(".surface .main .person .personList .eachPerson").attr("data-id") !=
+        v_receiverUserId ||
+      $(".surface .main .person .personList").html() == ""
+    ) {
       date = new Date(p_messageDate).toLocaleDateString("en-GB", {
         year: "numeric",
         month: "short",
@@ -725,7 +787,7 @@ function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messa
         minute: "numeric",
       });
 
-      let chathtml = `<div class="eachPerson" onclick="showChatDetail('${v_receiverUserId}')" data-id="${v_receiverUserId}">
+      const chathtml = `<div class="eachPerson" onclick="showChatDetail('${v_receiverUserId}')" data-id="${v_receiverUserId}">
                       <hr class="topLine">
                       <img class="profilePhoto" src="${p_receiverUserImage}" alt="">
                       <div class="content">
@@ -742,25 +804,39 @@ function addMessageToHtml(p_senderUserId, p_receiverUserId, p_messageId, p_messa
                       <hr class="bottomLine">
                   </div>`;
 
-      if ($('.surface .main .person .personList').html() == '')
-        $(`.surface .main .person .personList`).html(chathtml)
-      else if ($('.surface .main .person .personList .eachPerson').attr('data-id') != v_receiverUserId)
-        $(chathtml).insertAfter(`.surface .main .person .personList .eachPerson:last-child`)
+      if ($(".surface .main .person .personList").html() == "")
+        $(`.surface .main .person .personList`).html(chathtml);
+      else if (
+        $(".surface .main .person .personList .eachPerson").attr("data-id") !=
+        v_receiverUserId
+      )
+        $(chathtml).insertAfter(
+          `.surface .main .person .personList .eachPerson:last-child`
+        );
     }
     // add chat if it is shown in html (end)
 
-
     // update chat detail
-    $(messagehtml).insertAfter(`.surface .main .personDetail[data-id="${v_receiverUserId}"] .body .eachMessage:last-child`)
+    $(messagehtml).insertAfter(
+      `.surface .main .personDetail[data-id="${v_receiverUserId}"] .body .eachMessage:last-child`
+    );
 
     // update chat
-    lastMessage = p_text
-    $(`.surface .main .person .personList .eachPerson[data-id="${v_receiverUserId}"] .content .shortDetail`).html(lastMessage)
-    $(`.surface .main .person .personList .eachPerson[data-id="${v_receiverUserId}"] .time`).html(date)
+    lastMessage = p_text;
+    $(
+      `.surface .main .person .personList .eachPerson[data-id="${v_receiverUserId}"] .content .shortDetail`
+    ).html(lastMessage);
+    $(
+      `.surface .main .person .personList .eachPerson[data-id="${v_receiverUserId}"] .time`
+    ).html(date);
 
     // scroll bottom on person detail area
-    let bodHeight = $(`.surface .main .personDetail[data-id="${v_receiverUserId}"] .body`).prop('scrollHeight')
-    $(`.surface .main .personDetail[data-id="${v_receiverUserId}"] .body`).scrollTop(bodHeight)
+    const bodHeight = $(
+      `.surface .main .personDetail[data-id="${v_receiverUserId}"] .body`
+    ).prop("scrollHeight");
+    $(`.surface .main .personDetail[data-id="${v_receiverUserId}"] .body`).scrollTop(
+      bodHeight
+    );
   }
   // receiver user (end)
 }
@@ -776,9 +852,10 @@ function deleteMessage(p_messageId) {
     confirmButtonText: "Yes, delete it!",
   }).then((result) => {
     if (result.isConfirmed) {
-
-      let v_receiverUserId = $(".surface .main .personDetail").attr("data-id");
-      let v_senderUserId = $(".surface .main .person .profileInfoArea").attr("data-id");
+      const v_receiverUserId = $(".surface .main .personDetail").attr("data-id");
+      const v_senderUserId = $(".surface .main .person .profileInfoArea").attr(
+        "data-id"
+      );
 
       $.ajax({
         url: "/message/delete",
@@ -790,28 +867,28 @@ function deleteMessage(p_messageId) {
         },
         success: (response) => {
           if (response.status == "success") {
-            
-            var socket = io()
-            let o_message = {
+            const o_message = {
               senderUserId: v_senderUserId,
               receiverUserId: v_receiverUserId,
-              messageId: p_messageId
-            }
-            socket.emit('delete chat message', o_message)
+              messageId: p_messageId,
+            };
+            socket.emit("delete chat message", o_message);
 
             if (response.checkChatEmpty == true) {
-              $(`.surface .main .person .personList .eachPerson[data-id="${v_receiverUserId}"]`).remove()
+              $(
+                `.surface .main .person .personList .eachPerson[data-id="${v_receiverUserId}"]`
+              ).remove();
 
-              let mainPage = `<div class="mainPageDetail">
+              const mainPage = `<div class="mainPageDetail">
                                   <div class="logo">
                                       <i class="fas fa-users"></i> <i class="fas fa-comments-alt"></i>
                                   </div>
                                   <div class="title">ChatApp</div>
                                   <div class="text">Send and receive messages using email address.</div>
                               </div>`;
-              
-              $('.surface .main .personDetail').addClass('mainPage')
-              $('.surface .main .personDetail').html(mainPage)
+
+              $(".surface .main .personDetail").addClass("mainPage");
+              $(".surface .main .personDetail").html(mainPage);
             }
 
             toastr.success("Message has been deleted.");
@@ -826,56 +903,74 @@ function deleteMessage(p_messageId) {
 }
 
 function deleteMessageFromHtml(p_senderUserId, p_receiverUserId, p_messageId) {
-
-  if ($($(`.surface .main .personDetail .body .eachMessage:last-child`).attr('data-id') == p_messageId)) { // then it is last message. So, we need to update chat
+  if (
+    $(
+      $(`.surface .main .personDetail .body .eachMessage:last-child`).attr("data-id") ==
+        p_messageId
+    )
+  ) {
+    // then it is last message. So, we need to update chat
     // delete message
-    $(`.surface .main .personDetail .body .eachMessage[data-id="${p_messageId}"]`).remove();
+    $(
+      `.surface .main .personDetail .body .eachMessage[data-id="${p_messageId}"]`
+    ).remove();
 
     // update chat
-    let date = $('.surface .main .personDetail .body .eachMessage:last-child .subRegion .messageArea .time').html()
-    let text = $('.surface .main .personDetail .body .eachMessage:last-child .subRegion .messageArea .message').html()
-    let userType = '';
+    const date = $(
+      ".surface .main .personDetail .body .eachMessage:last-child .subRegion .messageArea .time"
+    ).html();
+    const text = $(
+      ".surface .main .personDetail .body .eachMessage:last-child .subRegion .messageArea .message"
+    ).html();
+    let userType = "";
 
-    if ($('.surface .main .personDetail .body .eachMessage:last-child').hasClass('me')) {
-      userType = 'Me: '
+    if (
+      $(".surface .main .personDetail .body .eachMessage:last-child").hasClass("me")
+    ) {
+      userType = "Me: ";
     }
 
-    let v_currentUserId = $('.surface .main .person .profileInfoArea').attr('data-id');
+    const v_currentUserId = $(".surface .main .person .profileInfoArea").attr(
+      "data-id"
+    );
     let v_userId;
 
-   
-    if(v_currentUserId == p_senderUserId){  // sender user
+    if (v_currentUserId == p_senderUserId) {
+      // sender user
       v_userId = p_receiverUserId;
     }
-    if(v_currentUserId == p_receiverUserId){  // receiver user
+    if (v_currentUserId == p_receiverUserId) {
+      // receiver user
       v_userId = p_senderUserId;
     }
 
-    $(`.surface .main .person .personList .eachPerson[data-id="${v_userId}"] .content .shortDetail`).html(userType + text)
-    $(`.surface .main .person .personList .eachPerson[data-id="${v_userId}"] .time`).html(date)
-  }
-  else {
+    $(
+      `.surface .main .person .personList .eachPerson[data-id="${v_userId}"] .content .shortDetail`
+    ).html(userType + text);
+    $(
+      `.surface .main .person .personList .eachPerson[data-id="${v_userId}"] .time`
+    ).html(date);
+  } else {
     // delete message
-    $(`.surface .main .personDetail .body .eachMessage[data-id="${p_messageId}"]`).remove();
+    $(
+      `.surface .main .personDetail .body .eachMessage[data-id="${p_messageId}"]`
+    ).remove();
   }
-
 }
 // message (end)
 
-
-
 // error message (begin)
 function getErrorMessageHtml(p_errormessages) {
-  let errormessage = '';
-  let messages = p_errormessages
-  
+  let errormessage = "";
+  const messages = p_errormessages;
+
   errormessage += `<div class="alert alert-danger alertError mt-5 mb-0">
                       <span class="closebtnErrorMsg" onclick="this.parentElement.remove();"><i class="fas fa-times"></i></span>
                       <ul class="messageArea">`;
 
-    for (let k = 0; k < messages.length; k ++) {
-      errormessage += ` <li>${messages[k].message}</li>`;
-    }
+  for (let k = 0; k < messages.length; k++) {
+    errormessage += ` <li>${messages[k].message}</li>`;
+  }
 
   errormessage += `   </ul>
                     </section>
@@ -884,8 +979,6 @@ function getErrorMessageHtml(p_errormessages) {
   return errormessage;
 }
 // error message (end)
-
-
 
 // profile (begin)
 function showProfile() {
@@ -898,9 +991,9 @@ function showProfile() {
     success: (response) => {
       if (response.status == "success") {
         let profilehtml = "";
-        let profilename = response.data.name;
-        let profileemail = response.data.email;
-        let profileimagepath = response.data.image;
+        const profilename = response.data.name;
+        const profileemail = response.data.email;
+        const profileimagepath = response.data.image;
 
         // Profile
         profilehtml += `<form encType="multipart/form-data" id="updateProfile">
@@ -951,86 +1044,119 @@ function showProfile() {
 
 function updateProfile() {
   // preview photo (begin)
-  $('.surface .main .person #updateProfile .profileArea #profile-photo').on('change', function () {
-    const [file] = $('.surface .main .person #updateProfile .profileArea #profile-photo')[0].files
+  $(".surface .main .person #updateProfile .profileArea #profile-photo").on(
+    "change",
+    function () {
+      const [file] = $(
+        ".surface .main .person #updateProfile .profileArea #profile-photo"
+      )[0].files;
 
-    if (file) {
-      $('.surface .main .person #updateProfile .profileArea .profileImg').attr('src', URL.createObjectURL(file))
+      if (file) {
+        $(".surface .main .person #updateProfile .profileArea .profileImg").attr(
+          "src",
+          URL.createObjectURL(file)
+        );
+      }
     }
-  })
+  );
   // preview photo (end)
 
-
-  $('#updateProfile').on('submit', function (e) {
+  $("#updateProfile").on("submit", function (e) {
     e.preventDefault();
 
     // get data
-    let name = $('.surface .main .person .profileArea .formElement #name').val()
-    let email = $('.surface .main .person .profileArea .formElement #email').val()
+    const name = $(".surface .main .person .profileArea .formElement #name").val();
+    const email = $(".surface .main .person .profileArea .formElement #email").val();
 
     // disable apply changes button
-    $('.surface .main .person .profileArea .buttonArea .updateProfile').prop('disabled', true)
-    $('.surface .main .person .profileArea .formElement #name').prop('disabled', true)
-    $('.surface .main .person .profileArea .formElement #email').prop('disabled', true)
+    $(".surface .main .person .profileArea .buttonArea .updateProfile").prop(
+      "disabled",
+      true
+    );
+    $(".surface .main .person .profileArea .formElement #name").prop("disabled", true);
+    $(".surface .main .person .profileArea .formElement #email").prop("disabled", true);
 
-    var formData = new FormData(this)
-    formData.append('name', name)
-    formData.append('email', email)
+    var formData = new FormData(this);
+    formData.append("name", name);
+    formData.append("email", email);
 
     $.ajax({
-      url: '/profile/update',
-      method: 'PUT',
-      dataType: 'json',
+      url: "/profile/update",
+      method: "PUT",
+      dataType: "json",
       data: formData,
       mimeType: "multipart/form-data",
       cache: false,
       processData: false,
       contentType: false,
       success: (response) => {
-        if (response.status == 'success') {
+        if (response.status == "success") {
           // enable apply changes button
-          $('.surface .main .person .profileArea .buttonArea .updateProfile').prop('disabled', false)
-          $('.surface .main .person .profileArea .formElement #name').prop('disabled', false)
-          $('.surface .main .person .profileArea .formElement #email').prop('disabled', false)
+          $(".surface .main .person .profileArea .buttonArea .updateProfile").prop(
+            "disabled",
+            false
+          );
+          $(".surface .main .person .profileArea .formElement #name").prop(
+            "disabled",
+            false
+          );
+          $(".surface .main .person .profileArea .formElement #email").prop(
+            "disabled",
+            false
+          );
 
           // clear error
-          $('.surface .main .person .profileArea .alertError').remove()
+          $(".surface .main .person .profileArea .alertError").remove();
 
           // update html of profile header
-          $('.surface .main .person .profileInfoArea .infoArea .content .name').html(name)
-          $('.surface .main .person .profileInfoArea .infoArea .content .shortDetail').html(email)
-          $('.surface .main .person .profileInfoArea .infoArea .profilePhoto').attr('src', response.data.profileImage)
+          $(".surface .main .person .profileInfoArea .infoArea .content .name").html(
+            name
+          );
+          $(
+            ".surface .main .person .profileInfoArea .infoArea .content .shortDetail"
+          ).html(email);
+          $(".surface .main .person .profileInfoArea .infoArea .profilePhoto").attr(
+            "src",
+            response.data.profileImage
+          );
 
-          toastr.success('Profile has been updated.')
+          toastr.success("Profile has been updated.");
         }
       },
       error: (response) => {
-        let res = response.responseJSON
+        const res = response.responseJSON;
 
-        if (res.status == 'fail') {
+        if (res.status == "fail") {
           // clear error
-          $('.surface .main .person .profileArea .alertError').remove()
+          $(".surface .main .person .profileArea .alertError").remove();
 
-          toastr.error('You got an error!')
-        }
-        else if (res.status == 'validation') {
-          let errormessage = getErrorMessageHtml(res.errorMessages)
+          toastr.error("You got an error!");
+        } else if (res.status == "validation") {
+          const errormessage = getErrorMessageHtml(res.errorMessages);
 
           // clear error
-          $('.surface .main .person .profileArea .alertError').remove()
+          $(".surface .main .person .profileArea .alertError").remove();
 
           // show error
-          $('.surface .main .person .profileArea .profileImg').after(errormessage);
+          $(".surface .main .person .profileArea .profileImg").after(errormessage);
         }
-        
-        // enable apply changes button
-        $('.surface .main .person .profileArea .buttonArea .updateProfile').prop('disabled', false)
-        $('.surface .main .person .profileArea .formElement #name').prop('disabled', false)
-        $('.surface .main .person .profileArea .formElement #email').prop('disabled', false)
-      }
-    })
-  })
 
+        // enable apply changes button
+        $(".surface .main .person .profileArea .buttonArea .updateProfile").prop(
+          "disabled",
+          false
+        );
+        $(".surface .main .person .profileArea .formElement #name").prop(
+          "disabled",
+          false
+        );
+        $(".surface .main .person .profileArea .formElement #email").prop(
+          "disabled",
+          false
+        );
+      },
+    });
+  });
 }
 
 function showContactsToSendMessage() {
@@ -1044,7 +1170,7 @@ function showContactsToSendMessage() {
       if (response.status == "success") {
         let contactshtml = "";
 
-        let contactsdata = response.data.contacts;
+        const contactsdata = response.data.contacts;
 
         // Search
         contactshtml += `<div class="searchMainArea">
@@ -1087,5 +1213,3 @@ function showContactsToSendMessage() {
   });
 }
 // profile (end)
-
-

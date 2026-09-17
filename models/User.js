@@ -1,53 +1,58 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const { use } = require("../routes/pageRoute");
-const Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
+
+const SALT_ROUNDS = 10;
 
 const UserSchema = new Schema({
   name: {
     type: String,
     required: true,
+    trim: true,
+    maxlength: 100,
   },
   email: {
     type: String,
     required: true,
     unique: true,
+    lowercase: true,
+    trim: true,
   },
   password: {
     type: String,
     required: true,
+    select: true,
   },
   image: {
     type: String,
-    default: '/images/default-image.png'
+    default: "/images/default-image.png",
   },
   phoneBook: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
     },
   ],
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+  },
+});
+
+UserSchema.pre("save", async function hashPassword(next) {
+  if (!this.isModified("password")) return next();
+
+  try {
+    this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
+    next();
+  } catch (error) {
+    next(error);
   }
 });
 
-UserSchema.pre("save", function (next) {
-  const user = this;
-  if (!user.isModified("password")) return next();
+UserSchema.methods.comparePassword = function comparePassword(candidate) {
+  return bcrypt.compare(candidate, this.password);
+};
 
-  bcrypt.genSalt(10, (error, salt) => {
-    if (error) return next(error);
-
-    bcrypt.hash(user.password, salt, (error, hash) => {
-      if (error) return next(error);
-
-      user.password = hash;
-      next();
-    });
-  });
-});
-
-const User = mongoose.model("User", UserSchema);
-module.exports = User;
+module.exports = mongoose.model("User", UserSchema);

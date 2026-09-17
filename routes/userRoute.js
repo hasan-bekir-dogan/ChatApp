@@ -1,44 +1,58 @@
-const { application } = require("express");
 const express = require("express");
-const authController = require("../controllers/authController");
+const rateLimit = require("express-rate-limit");
 const { body } = require("express-validator");
+const authController = require("../controllers/authController");
 const User = require("../models/User");
+const env = require("../config/env");
 
 const router = express.Router();
 
-router.route("/signup").post(
-  [
-    body("name").not().isEmpty().withMessage("Please enter your name."),
+// Credential endpoints are the ones worth brute forcing, so they get their own
+// budget instead of relying on a global limit.
+const credentialsLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: "Too many attempts. Please try again later.",
+  // The suite signs several users in per test file and would otherwise run
+  // into the limit instead of exercising the behaviour under test.
+  skip: () => env.isTest,
+});
 
+router.post(
+  "/signup",
+  credentialsLimiter,
+  [
+    body("name").trim().notEmpty().withMessage("Please enter your name."),
     body("email")
       .isEmail()
       .withMessage("Please enter valid email.")
-      .custom((userEmail) => {
-        return User.findOne({
-          email: userEmail,
-        }).then((user) => {
-          if (user) {
-            return Promise.reject("Email is already exists!");
-          }
-        });
+      .normalizeEmail()
+      .custom(async (email) => {
+        const user = await User.findOne({ email });
+
+        if (user) {
+          throw new Error("Email is already exists!");
+        }
       }),
-
-    body("password").not().isEmpty().withMessage("Please enter a password."),
+    body("password")
+      .isLength({ min: 8 })
+      .withMessage("Password must be at least 8 characters long."),
   ],
-
   authController.createUser
 );
 
-router.route("/login").post(
+router.post(
+  "/login",
+  credentialsLimiter,
   [
-    body("email").not().isEmpty().withMessage("Please enter an email."),
-
-    body("password").not().isEmpty().withMessage("Please enter password."),
+    body("email").trim().notEmpty().withMessage("Please enter an email."),
+    body("password").notEmpty().withMessage("Please enter password."),
   ],
-
   authController.loginUser
 );
 
-router.route('/logout').get(authController.logoutUser);
+router.get("/logout", authController.logoutUser);
 
 module.exports = router;

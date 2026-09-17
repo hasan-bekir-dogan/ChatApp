@@ -1,13 +1,13 @@
-const { application } = require("express");
 const express = require("express");
 const personController = require("../controllers/personController");
-const { body } = require("express-validator");
-const User = require("../models/User");
+const { requireAuthApi } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-router.route("/create").post(personController.createPerson);
-router.route("/list").get(personController.listPerson);
-router.route("/delete").delete(personController.deletePerson);
+router.use(requireAuthApi);
+
+router.post("/create", personController.createPerson);
+router.get("/list", personController.listPerson);
+router.delete("/delete", personController.deletePerson);
 
 module.exports = router;
