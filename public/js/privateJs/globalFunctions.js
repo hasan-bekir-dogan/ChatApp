@@ -234,7 +234,7 @@ function showChat() {
     dataType: "json",
     success: (response) => {
       if (response.status == "success") {
-        let chathtml = "";
+        let chathtml;
         const chat = response.data.chat;
         let date;
 
@@ -677,7 +677,6 @@ function addMessageToHtml(
   if (v_currentUserId == p_senderUserId) {
     // sender user
     let messagehtml = "";
-    let lastMessage = "";
 
     messagehtml += `<div class="eachMessage me" data-id="${p_messageId}">
                     <div class="subRegion">
@@ -721,7 +720,7 @@ function addMessageToHtml(
     }
 
     // update chat
-    lastMessage = "Me: " + p_text;
+    const lastMessage = "Me: " + p_text;
     $(
       `.surface .main .person .personList .eachPerson[data-id="${p_receiverUserId}"] .content .shortDetail`
     ).html(lastMessage);
@@ -744,7 +743,6 @@ function addMessageToHtml(
   // receiver user (begin)
   if (v_currentUserId == p_receiverUserId) {
     let messagehtml = "";
-    let lastMessage = "";
     const v_receiverUserId = p_senderUserId;
 
     messagehtml += `<div class="eachMessage you" data-id="${p_messageId}">
@@ -822,7 +820,7 @@ function addMessageToHtml(
     );
 
     // update chat
-    lastMessage = p_text;
+    const lastMessage = p_text;
     $(
       `.surface .main .person .personList .eachPerson[data-id="${v_receiverUserId}"] .content .shortDetail`
     ).html(lastMessage);
