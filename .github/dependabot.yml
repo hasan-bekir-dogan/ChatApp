@@ -8,6 +8,13 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: development
+    ignore:
+      # connect-mongo 6 pulls in mongodb driver 7, whose handshake fails under
+      # Jest ("Missing required sub-document 'driver'") while working fine
+      # outside it. Staying on 5.x also keeps a single driver copy shared with
+      # mongoose. Revisit when the incompatibility is resolved.
+      - dependency-name: connect-mongo
+        versions: ["6.x"]
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
