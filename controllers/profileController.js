@@ -1,112 +1,129 @@
-const { validationResult } = require("express-validator");
+const fs = require("fs/promises");
+const path = require("path");
 const User = require("../models/User");
-const fs = require("fs");
+const env = require("../config/env");
+const { asString } = require("../utils/query");
 
-exports.getProfile = async (req, res) => {
+const UPLOAD_DIR = path.join(__dirname, "..", "public", "uploads");
+const PUBLIC_UPLOAD_PREFIX = "/uploads/";
+
+const ALLOWED_IMAGE_TYPES = {
+  "image/png": ".png",
+  "image/jpeg": ".jpg",
+  "image/gif": ".gif",
+  "image/webp": ".webp",
+};
+
+function validationResponse(res, messages) {
+  return res.status(422).json({
+    errorMessages: messages.map((message) => ({ message })),
+    status: "validation",
+  });
+}
+
+/**
+ * Stores an uploaded avatar under a name derived from the user id and the
+ * current time. The extension comes from the detected MIME type, never from
+ * the client supplied file name, so the upload cannot escape the directory or
+ * land as an executable file.
+ */
+async function storeAvatar(userId, file) {
+  const extension = ALLOWED_IMAGE_TYPES[file.mimetype];
+
+  if (!extension) {
+    const error = new Error("Only PNG, JPEG, GIF and WebP images are allowed.");
+    error.status = 422;
+    throw error;
+  }
+
+  if (file.size > env.uploadMaxBytes) {
+    const error = new Error("The image is too large.");
+    error.status = 422;
+    throw error;
+  }
+
+  await fs.mkdir(UPLOAD_DIR, { recursive: true });
+
+  const fileName = `${userId}_${Date.now()}${extension}`;
+
+  await file.mv(path.join(UPLOAD_DIR, fileName));
+
+  return `${PUBLIC_UPLOAD_PREFIX}${fileName}`;
+}
+
+async function removeAvatar(imagePath) {
+  if (!imagePath) return;
+
+  // Older records stored the avatar as "/../uploads/<name>".
+  const normalized = imagePath.replace("/../uploads/", PUBLIC_UPLOAD_PREFIX);
+
+  if (!normalized.startsWith(PUBLIC_UPLOAD_PREFIX)) return;
+
+  const fileName = path.basename(normalized);
+
+  await fs.rm(path.join(UPLOAD_DIR, fileName), { force: true });
+}
+
+exports.getProfile = async (req, res, next) => {
   try {
-    const user = await User.findById(req.session.userId);
-
     res.status(200).json({
-        data: {
-          name: user.name,
-          email: user.email,
-          image: user.image,
-        },
-        status: "success",
-      });
-  } catch (error) {
-    res.status(400).json({
-      error,
-      status: "fail",
+      data: {
+        name: req.user.name,
+        email: req.user.email,
+        image: req.user.image,
+      },
+      status: "success",
     });
+  } catch (error) {
+    next(error);
   }
 };
 
-exports.updateProfile = async (req, res) => {
+exports.updateProfile = async (req, res, next) => {
   try {
-    // validation (begin)
-    let errormessage = []
-    let checkVal = true
+    const name = asString(req.body.name);
+    const email = asString(req.body.email).toLowerCase();
+    const messages = [];
 
-    if (req.body.name === '') {
-      errormessage.push({
-        message: 'Name must have some value.'
-      })
-      checkVal = false
-    }
-    if (req.body.email === '') {
-      errormessage.push({
-        message: 'E-mail must have some value.'
-      })
-      checkVal = false
+    if (!name) messages.push("Name must have some value.");
+    if (!email) messages.push("E-mail must have some value.");
+
+    if (messages.length > 0) {
+      return validationResponse(res, messages);
     }
 
-    if (checkVal === false) {
-      res.status(422).json({
-        errorMessages: errormessage,
-        status: 'validation'
-      })
+    const emailOwner = await User.findOne({ email });
 
-      return
-    }
-    // validation (end)
-
-    // upload image (begin)
-    const uploadDir = "public/uploads";
-
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir);
+    if (emailOwner && String(emailOwner._id) !== String(req.user._id)) {
+      return validationResponse(res, ["This e-mail is already in use."]);
     }
 
-    // get current date (begin)
-    var datetime = new Date();
-    var day = String(datetime.getDate());
-    var month = String(datetime.getMonth());
-    var year = String(datetime.getFullYear());
-    var hour = String(datetime.getHours());
-    var minute = String(datetime.getMinutes());
-    var second = String(datetime.getSeconds());
+    const user = await User.findById(req.user._id);
+    const uploadedImage = req.files && req.files.image;
+    let profileImage = user.image;
 
-    let fulldate = year + month + day + '-' + hour + minute + second
-    // get current date (end)
+    if (uploadedImage) {
+      const previousImage = user.image;
 
-    let profilePhoto = '';
-    if (req.files != null) {
-      let uploadedImage = req.files.image;
-      uploadedImage.name = req.session.userId + '_' + fulldate + '.png'
-      profilePhoto = "/../uploads/" + uploadedImage.name
-      let uploadPath = __dirname + "/../public/uploads/" + uploadedImage.name;
+      profileImage = await storeAvatar(user._id, uploadedImage);
+      user.image = profileImage;
 
-      uploadedImage.mv(uploadPath);
-    }
-    // upload image (end)
-
-    const user = await User.findById(req.session.userId)
-    user.name = req.body.name
-    user.email = req.body.email
-
-    // delete image
-    if (req.files != null) {
-      let deleteImagePath = __dirname + "/../public" + user.image.slice(3)
-      if (fs.existsSync(deleteImagePath)) {
-        fs.unlinkSync(deleteImagePath);
-      }
-      user.image = profilePhoto
+      await removeAvatar(previousImage);
     }
 
-    user.save()
-    
+    user.name = name;
+    user.email = email;
+    await user.save();
 
     res.status(200).json({
-      data: {
-        profileImage: profilePhoto
-      },
-      status: 'success'
-    })
+      data: { profileImage },
+      status: "success",
+    });
   } catch (error) {
-    res.status(400).json({
-      error,
-      status: 'fail'
-    })
+    if (error.status === 422) {
+      return validationResponse(res, [error.message]);
+    }
+
+    next(error);
   }
-}
+};
