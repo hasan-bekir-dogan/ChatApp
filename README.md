@@ -5,7 +5,7 @@ MongoDB.
 
 [![CI](https://github.com/hasan-bekir-dogan/ChatApp/actions/workflows/ci.yml/badge.svg)](https://github.com/hasan-bekir-dogan/ChatApp/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D22-brightgreen.svg)](https://nodejs.org)
 
 ChatApp is a small, dependency-light chat server you can read end to end in an
 afternoon. Users register with an email address, add each other as contacts,
@@ -70,7 +70,7 @@ room and the recipient's room only.
 
 ## Requirements
 
-- Node.js 18 or newer
+- Node.js 22 or newer
 - MongoDB 5 or newer
 
 ## Getting started

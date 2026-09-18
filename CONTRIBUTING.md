@@ -13,7 +13,7 @@ cp .env.example .env
 npm run dev
 ```
 
-You need Node.js 18 or newer and a MongoDB instance. If you have Docker, the
+You need Node.js 22 or newer and a MongoDB instance. If you have Docker, the
 repository ships a compose file that starts MongoDB for you:
 
 ```bash
