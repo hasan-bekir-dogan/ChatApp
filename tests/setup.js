@@ -14,8 +14,9 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
+  await mongoose.disconnect();
+
   // The session store keeps its own MongoDB connection; without closing it
   // Jest would report open handles and hang after the last test.
   await sessionStore.close();
-  await mongoose.disconnect();
 });

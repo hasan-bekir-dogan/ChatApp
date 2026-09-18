@@ -2,7 +2,7 @@ const path = require("path");
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const flash = require("connect-flash");
+const flash = require("./middlewares/flash");
 const fileUpload = require("express-fileupload");
 const helmet = require("helmet");
 const compression = require("compression");
@@ -15,7 +15,13 @@ const profileRoute = require("./routes/profileRoute");
 const chatRoute = require("./routes/chatRoute");
 const messageRoute = require("./routes/messageRoute");
 
-const sessionStore = MongoStore.create({ mongoUrl: env.mongoUri });
+const sessionStore = MongoStore.create({
+  mongoUrl: env.mongoUri,
+  // The store sets up its TTL index in the background on creation. A short
+  // test file can finish before that settles, and tearing the client down
+  // mid-flight surfaces as an unhandled rejection.
+  autoRemove: env.isTest ? "disabled" : "native",
+});
 
 const sessionMiddleware = session({
   name: "chatapp.sid",
