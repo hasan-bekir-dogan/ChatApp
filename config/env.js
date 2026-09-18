@@ -1,4 +1,5 @@
-require("dotenv").config();
+// quiet: dotenv 17 otherwise prints a promotional line on every boot.
+require("dotenv").config({ quiet: true });
 
 const DEFAULT_SESSION_SECRET = "insecure-development-secret";
 
